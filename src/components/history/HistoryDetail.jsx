@@ -48,6 +48,15 @@ const HistoryDetail = ({ record, petId, onClose }) => {
       
       try {
         const currentUrl = imageUrls[currentImageIndex];
+        
+        // Si la URL ya es una URL pública de Google (lh3.googleusercontent.com), usarla directamente
+        if (currentUrl.includes('googleusercontent.com')) {
+          setCurrentImageBlob(currentUrl);
+          setImageLoaded(true);
+          return;
+        }
+        
+        // Si no, extraer el fileId y obtener el blob
         const fileId = extractFileId(currentUrl);
         
         if (!fileId) {
@@ -67,7 +76,8 @@ const HistoryDetail = ({ record, petId, onClose }) => {
     loadImage();
 
     return () => {
-      if (currentImageBlob) {
+      // Solo revocar URLs de tipo blob
+      if (currentImageBlob && currentImageBlob.startsWith('blob:')) {
         URL.revokeObjectURL(currentImageBlob);
       }
     };
