@@ -98,7 +98,7 @@ const AppRoutes = () => {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/pet-history">
       <AuthProvider>
         <DataProvider>
           <div className="app">
