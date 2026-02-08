@@ -177,6 +177,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 300px;
+  position: relative;
 }
 
 .gallery-image {
@@ -185,6 +187,63 @@
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* Loading State */
+.gallery-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: white;
+}
+
+.gallery-loading .spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.gallery-loading p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Error State */
+.gallery-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: white;
+  text-align: center;
+  padding: 24px;
+}
+
+.gallery-error .error-icon {
+  font-size: 48px;
+  opacity: 0.8;
+}
+
+.gallery-error p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.gallery-error small {
+  font-size: 14px;
+  opacity: 0.8;
 }
 
 .gallery-nav {

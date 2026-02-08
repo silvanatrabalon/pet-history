@@ -27,7 +27,7 @@ class GoogleDriveService {
 
       // Paso 3: Subir archivo usando multipart upload
       const response = await fetch(
-        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink,webContentLink',
+        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink,webContentLink,thumbnailLink',
         {
           method: 'POST',
           headers: {
@@ -48,12 +48,14 @@ class GoogleDriveService {
       await this.makeFilePublic(fileData.id);
 
       // Paso 5: Retornar URL de visualización directa
-      const publicUrl = `https://drive.google.com/uc?export=view&id=${fileData.id}`;
+      // Usamos la URL directa que funciona mejor para visualización en <img>
+      const publicUrl = `https://lh3.googleusercontent.com/d/${fileData.id}`;
       
       return {
         fileId: fileData.id,
         url: publicUrl,
-        webViewLink: fileData.webViewLink
+        webViewLink: fileData.webViewLink,
+        thumbnailLink: fileData.thumbnailLink
       };
     } catch (error) {
       console.error('❌ Error subiendo imagen:', error);
@@ -99,6 +101,36 @@ class GoogleDriveService {
       return results;
     } catch (error) {
       console.error('❌ Error subiendo múltiples imágenes:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtiene una imagen como blob para visualización directa
+   * Esto evita problemas de CORS y URLs públicas
+   */
+  async getImageBlob(fileId) {
+    try {
+      const response = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+        {
+          headers: {
+            Authorization: `Bearer ${window.gapi.client.getToken().access_token}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error obteniendo imagen: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      
+      console.log('✅ Imagen obtenida como blob:', fileId);
+      return objectUrl;
+    } catch (error) {
+      console.error('❌ Error obteniendo blob de imagen:', error);
       throw error;
     }
   }

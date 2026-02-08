@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatDate, splitImageUrls } from '../../utils/helpers';
+import googleDriveService from '../../services/googleDrive';
 import './HistoryItem.css';
 
 const HistoryItem = ({ record, petId }) => {
@@ -8,6 +9,64 @@ const HistoryItem = ({ record, petId }) => {
   const imageUrls = splitImageUrls(record.imageUrls);
   const [showGallery, setShowGallery] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [currentImageBlob, setCurrentImageBlob] = useState(null);
+
+  // Función para extraer el fileId de diferentes formatos de URL de Drive
+  const extractFileId = (url) => {
+    // Formato: https://lh3.googleusercontent.com/d/FILE_ID
+    if (url.includes('googleusercontent.com/d/')) {
+      return url.split('/d/')[1].split('?')[0];
+    }
+    // Formato: https://drive.google.com/uc?export=view&id=FILE_ID
+    if (url.includes('drive.google.com/uc') && url.includes('id=')) {
+      return url.split('id=')[1].split('&')[0];
+    }
+    // Formato: https://drive.google.com/file/d/FILE_ID
+    if (url.includes('drive.google.com/file/d/')) {
+      return url.split('/d/')[1].split('/')[0];
+    }
+    return null;
+  };
+
+  // Cargar imagen como blob cuando cambia el índice
+  useEffect(() => {
+    if (!showGallery) return;
+
+    const loadImage = async () => {
+      setImageLoaded(false);
+      setImageError(false);
+      
+      try {
+        const currentUrl = imageUrls[currentImageIndex];
+        const fileId = extractFileId(currentUrl);
+        
+        if (!fileId) {
+          console.error('No se pudo extraer el fileId de:', currentUrl);
+          setImageError(true);
+          return;
+        }
+
+        console.log('🖼️ Cargando imagen con fileId:', fileId);
+        const blobUrl = await googleDriveService.getImageBlob(fileId);
+        setCurrentImageBlob(blobUrl);
+        setImageLoaded(true);
+      } catch (error) {
+        console.error('Error cargando imagen:', error);
+        setImageError(true);
+      }
+    };
+
+    loadImage();
+
+    // Cleanup: liberar el blob URL anterior
+    return () => {
+      if (currentImageBlob) {
+        URL.revokeObjectURL(currentImageBlob);
+      }
+    };
+  }, [showGallery, currentImageIndex]);
 
   const handleEdit = () => {
     navigate(`/pets/${petId}/history/${record.historyId}/edit`);
@@ -20,6 +79,10 @@ const HistoryItem = ({ record, petId }) => {
 
   const closeGallery = () => {
     setShowGallery(false);
+    if (currentImageBlob) {
+      URL.revokeObjectURL(currentImageBlob);
+      setCurrentImageBlob(null);
+    }
   };
 
   const nextImage = () => {
@@ -97,11 +160,28 @@ const HistoryItem = ({ record, petId }) => {
             </button>
             
             <div className="gallery-image-container">
-              <img
-                src={imageUrls[currentImageIndex]}
-                alt={`Imagen ${currentImageIndex + 1}`}
-                className="gallery-image"
-              />
+              {!imageLoaded && !imageError && (
+                <div className="gallery-loading">
+                  <div className="spinner"></div>
+                  <p>Cargando imagen...</p>
+                </div>
+              )}
+              
+              {imageError ? (
+                <div className="gallery-error">
+                  <span className="error-icon">⚠️</span>
+                  <p>No se pudo cargar la imagen</p>
+                  <small>Intenta abrirla con el botón de abajo</small>
+                </div>
+              ) : (
+                imageLoaded && currentImageBlob && (
+                  <img
+                    src={currentImageBlob}
+                    alt={`Imagen ${currentImageIndex + 1}`}
+                    className="gallery-image"
+                  />
+                )
+              )}
             </div>
 
             {imageUrls.length > 1 && (
