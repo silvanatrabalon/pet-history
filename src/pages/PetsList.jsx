@@ -12,10 +12,21 @@ const PetsList = () => {
   const { user, login, logout, isAuthenticated } = useAuth();
   const { pets, loading, error, loadPets } = useData();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [shuffledPets, setShuffledPets] = useState([]);
 
   useEffect(() => {
     loadPets();
   }, [loadPets]);
+
+  // Mezclar las mascotas cada vez que cambian
+  useEffect(() => {
+    if (pets.length > 0) {
+      const shuffled = [...pets].sort(() => Math.random() - 0.5);
+      setShuffledPets(shuffled);
+    } else {
+      setShuffledPets([]);
+    }
+  }, [pets]);
 
   const handleAddPet = () => {
     if (!isAuthenticated) {
@@ -109,7 +120,7 @@ const PetsList = () => {
 
         {!loading && !error && pets.length > 0 && (
           <div className="pets-grid">
-            {pets.map(pet => (
+            {shuffledPets.map(pet => (
               <PetCard key={pet.petId} pet={pet} />
             ))}
           </div>
