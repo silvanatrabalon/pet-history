@@ -2,6 +2,7 @@
   "name": "pet-history",
   "version": "1.0.0",
   "description": "App web mobile-first para trackeo de visitas médicas e historial clínico de mascotas",
+  "homepage": "https://silvanatrabalon.github.io/pet-history",
   "private": true,
   "dependencies": {
     "react": "^18.2.0",
@@ -13,7 +14,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [

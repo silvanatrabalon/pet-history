@@ -115,13 +115,15 @@ npm install
    
    - **Orígenes de JavaScript autorizados**:
      - Clic en **"+ Agregar URI"**
-     - Agrega: `http://localhost:3000`
-     - (Si vas a deployar, después agregar tu URL de producción)
+     - Agrega: `http://localhost:3000` (para desarrollo local)
+     - Clic en **"+ Agregar URI"** nuevamente
+     - Agrega: `https://silvanatrabalon.github.io` (para producción)
    
    - **URI de redireccionamiento autorizados**:
      - Clic en **"+ Agregar URI"**
-     - Agrega: `http://localhost:3000`
-     - (Si vas a deployar, después agregar tu URL de producción)
+     - Agrega: `http://localhost:3000` (para desarrollo local)
+     - Clic en **"+ Agregar URI"** nuevamente
+     - Agrega: `https://silvanatrabalon.github.io` (para producción)
    
    - Clic en **"Crear"**
 
@@ -577,6 +579,96 @@ Abre tu carpeta de Google Drive y verifica que las imágenes se estén subiendo.
 
 ---
 
+## 🚀 Deploy a GitHub Pages
+
+Este proyecto está configurado para desplegarse automáticamente a GitHub Pages usando GitHub Actions.
+
+### Configuración inicial (solo una vez)
+
+1. **Habilitar GitHub Pages en tu repositorio**
+   - Ve a: `https://github.com/silvanatrabalon/pet-history/settings/pages`
+   - En "Source", selecciona: **GitHub Actions**
+   - Guarda los cambios
+
+2. **Configurar Secrets en GitHub**
+   
+   Ve a: `https://github.com/silvanatrabalon/pet-history/settings/secrets/actions`
+   
+   Agrega estos 4 secrets (clic en "New repository secret" para cada uno):
+   
+   | Secret Name | Value | Dónde obtenerlo |
+   |------------|-------|-----------------|
+   | `REACT_APP_GOOGLE_CLIENT_ID` | Tu Client ID de OAuth | Google Cloud Console → Credenciales |
+   | `REACT_APP_SPREADSHEET_ID` | ID de tu Google Sheet | URL de tu hoja (ver paso 3) |
+   | `REACT_APP_DRIVE_FOLDER_ID` | ID de tu carpeta Drive | URL de tu carpeta (ver paso 4) |
+   | `REACT_APP_GOOGLE_API_KEY` | Tu API Key pública | Google Cloud Console → Credenciales |
+   
+   **⚠️ IMPORTANTE**: Estos secrets son necesarios para que la app funcione en producción.
+
+3. **Actualizar URLs autorizadas en Google Cloud Console**
+   
+   Ve a: `https://console.cloud.google.com/apis/credentials`
+   
+   - Clic en tu **"Pet History Web Client"**
+   - En **"Orígenes de JavaScript autorizados"**, agrega:
+     - `https://silvanatrabalon.github.io`
+   - En **"URI de redireccionamiento autorizados"**, agrega:
+     - `https://silvanatrabalon.github.io`
+   - Clic en **"Guardar"**
+
+### Deploy automático
+
+Una vez configurado, cada vez que hagas `git push` a la rama `main`, la app se desplegará automáticamente:
+
+```bash
+git add .
+git commit -m "feat: nueva funcionalidad"
+git push origin main
+```
+
+**Proceso automático:**
+1. GitHub Actions detecta el push
+2. Instala dependencias
+3. Ejecuta el build con las variables de entorno
+4. Despliega a GitHub Pages
+
+**Ver el progreso:**
+- Ve a: `https://github.com/silvanatrabalon/pet-history/actions`
+- Verás el workflow "Deploy to GitHub Pages" ejecutándose
+- Tarda ~2-3 minutos
+
+**Acceder a la app:**
+- URL: `https://silvanatrabalon.github.io/pet-history`
+- La URL estará disponible una vez termine el deploy
+
+### Deploy manual (opcional)
+
+Si prefieres hacer deploy manual sin GitHub Actions:
+
+```bash
+npm run deploy
+```
+
+Esto ejecuta el build y lo sube a la rama `gh-pages`.
+
+### Troubleshooting
+
+**Error: "Secrets not found"**
+- Verifica que hayas agregado los 4 secrets en GitHub Settings
+
+**Error: "OAuth redirect_uri_mismatch"**
+- Verifica que hayas agregado `https://silvanatrabalon.github.io` a las URLs autorizadas
+
+**La app se ve en blanco**
+- Verifica que `homepage` en `package.json` sea correcta
+- Debería ser: `https://silvanatrabalon.github.io/pet-history`
+
+**Error 403 en Google Sheets**
+- Verifica que la hoja esté pública: "Anyone with the link" → "Viewer"
+- Verifica que `REACT_APP_GOOGLE_API_KEY` esté en los secrets
+
+---
+
 ## 📱 Testing en mobile
 
 ### Con tu celular en la misma red WiFi
@@ -609,9 +701,9 @@ Abre tu carpeta de Google Drive y verifica que las imágenes se estén subiendo.
 
 ---
 
-## 🚀 Deploy a producción
+## 🌐 Otras opciones de deploy
 
-### Opción 1: Vercel (Recomendado)
+### Opción 1: Vercel
 
 ```bash
 npm install -g vercel
@@ -630,30 +722,7 @@ netlify login
 netlify deploy --prod --dir=build
 ```
 
-### Opción 3: GitHub Pages
-
-1. Agregar en `package.json`:
-   ```json
-   "homepage": "https://tuusuario.github.io/pet-history",
-   ```
-
-2. Instalar gh-pages:
-   ```bash
-   npm install --save-dev gh-pages
-   ```
-
-3. Agregar scripts:
-   ```json
-   "predeploy": "npm run build",
-   "deploy": "gh-pages -d build"
-   ```
-
-4. Deploy:
-   ```bash
-   npm run deploy
-   ```
-
-**IMPORTANTE:** No olvides actualizar los orígenes autorizados en Google Cloud Console con tu URL de producción.
+**IMPORTANTE para cualquier opción:** No olvides actualizar los orígenes autorizados en Google Cloud Console con tu URL de producción.
 
 ---
 
