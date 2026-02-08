@@ -1,0 +1,153 @@
+/* Pets List Page Styles - Mobile First */
+
+.page {
+  min-height: 100vh;
+  background: #F9FAFB;
+  padding-bottom: 80px; /* Espacio para FAB */
+}
+
+.page-header {
+  background: white;
+  padding: 16px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+}
+
+.user-email {
+  font-size: 12px;
+  color: #6B7280;
+  margin: 4px 0 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  padding: 8px 16px;
+  background: #F3F4F6;
+  color: #374151;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.logout-btn:hover {
+  background: #E5E7EB;
+}
+
+.logout-btn:active {
+  transform: scale(0.96);
+}
+
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.pets-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.empty-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 8px 0;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.fab-container {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+  pointer-events: none;
+}
+
+.fab {
+  pointer-events: auto;
+  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 16px 32px;
+  min-height: 56px;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .page-header {
+    padding: 20px 24px;
+  }
+
+  .page-title {
+    font-size: 28px;
+  }
+
+  .pets-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .fab-container {
+    justify-content: flex-end;
+    padding-right: 40px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pets-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

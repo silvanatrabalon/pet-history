@@ -1,0 +1,38 @@
+/* Add History Page Styles - Mobile First */
+
+.header-info {
+  flex: 1;
+  text-align: center;
+}
+
+.pet-name-subtitle {
+  font-size: 14px;
+  color: #6B7280;
+  margin: 4px 0 0 0;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .header-content {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+  }
+
+  .header-info {
+    text-align: center;
+  }
+}

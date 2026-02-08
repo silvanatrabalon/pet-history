@@ -1,0 +1,180 @@
+/* Global Styles - Mobile First */
+
+/* Reset y Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #111827;
+  background: #F9FAFB;
+  overflow-x: hidden;
+}
+
+/* App Container */
+.app {
+  min-height: 100vh;
+}
+
+.app-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.app-loading .spinner {
+  width: 56px;
+  height: 56px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Links */
+a {
+  color: #4F46E5;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Scrollbar personalizado (Webkit) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F3F4F6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* Animaciones */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Utilidades de texto */
+.text-center {
+  text-align: center;
+}
+
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Responsive Images */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Focus Visible (mejora accesibilidad) */
+*:focus-visible {
+  outline: 2px solid #4F46E5;
+  outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+  }
+
+  .page-header,
+  .fab-container,
+  .add-history-cta,
+  .back-btn,
+  .share-btn,
+  button {
+    display: none !important;
+  }
+
+  .page {
+    padding: 0;
+  }
+
+  .page-content {
+    max-width: 100%;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+}
+
+/* Dark mode support (opcional para futuras versiones) */
+@media (prefers-color-scheme: dark) {
+  /* Comentado por ahora, se puede activar luego
+  body {
+    background: #111827;
+    color: #F9FAFB;
+  }
+  */
+}
+
+/* Mejoras de performance */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* iOS Safe Area */
+@supports (padding: max(0px)) {
+  .page {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}
