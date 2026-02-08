@@ -3,7 +3,7 @@
  * Las imágenes se almacenan con permisos públicos de lectura
  */
 
-import { DRIVE_FOLDER_ID } from '../utils/constants';
+import { DRIVE_FOLDER_ID, API_KEY } from '../utils/constants';
 
 class GoogleDriveService {
   /**
@@ -111,14 +111,26 @@ class GoogleDriveService {
    */
   async getImageBlob(fileId) {
     try {
-      const response = await fetch(
-        `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
-        {
-          headers: {
-            Authorization: `Bearer ${window.gapi.client.getToken().access_token}`
+      // Verificar si hay token OAuth, sino usar API key
+      const hasAuth = window.gapi.client.getToken();
+      let response;
+      
+      if (hasAuth) {
+        // Modo autenticado: usar OAuth
+        response = await fetch(
+          `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+          {
+            headers: {
+              Authorization: `Bearer ${hasAuth.access_token}`
+            }
           }
-        }
-      );
+        );
+      } else {
+        // Modo observador: usar API key (requiere que el archivo sea público)
+        response = await fetch(
+          `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`
+        );
+      }
 
       if (!response.ok) {
         throw new Error(`Error obteniendo imagen: ${response.statusText}`);
