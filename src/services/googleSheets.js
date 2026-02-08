@@ -147,6 +147,95 @@ class GoogleSheetsService {
   }
 
   /**
+   * Actualiza una mascota existente
+   */
+  async updatePet(petId, petData) {
+    try {
+      // Primero encontrar la fila de la mascota
+      const pets = await this.getPets();
+      const rowIndex = pets.findIndex(pet => pet.petId === petId);
+      
+      if (rowIndex === -1) {
+        throw new Error('Mascota no encontrada');
+      }
+
+      // La fila en la sheet es rowIndex + 2 (1 por headers, 1 por índice base-0)
+      const sheetRow = rowIndex + 2;
+
+      const row = [
+        petData.petId,
+        petData.nombre,
+        petData.especie,
+        petData.raza,
+        petData.edad,
+        petData.sexo,
+        petData.notas || '',
+        petData.createdAt,
+        petData.photoUrl || ''
+      ];
+
+      const response = await window.gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${SHEETS.PETS}!A${sheetRow}:I${sheetRow}`,
+        valueInputOption: 'USER_ENTERED',
+        resource: {
+          values: [row]
+        }
+      });
+
+      console.log('✅ Mascota actualizada:', petData.nombre);
+      return response.result;
+    } catch (error) {
+      console.error('❌ Error actualizando mascota:', error);
+      throw new Error('No se pudo actualizar la mascota');
+    }
+  }
+
+  /**
+   * Actualiza un registro médico existente
+   */
+  async updateMedicalRecord(historyId, recordData) {
+    try {
+      // Primero encontrar la fila del registro
+      const history = await this.getMedicalHistory();
+      const rowIndex = history.findIndex(record => record.historyId === historyId);
+      
+      if (rowIndex === -1) {
+        throw new Error('Registro no encontrado');
+      }
+
+      // La fila en la sheet es rowIndex + 2
+      const sheetRow = rowIndex + 2;
+
+      const row = [
+        recordData.historyId,
+        recordData.petId,
+        recordData.fecha,
+        recordData.diagnostico || '',
+        recordData.peso || '',
+        recordData.medicacion || '',
+        recordData.imageUrls || '',
+        recordData.createdAt
+      ];
+
+      const response = await window.gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${SHEETS.MEDICAL_HISTORY}!A${sheetRow}:H${sheetRow}`,
+        valueInputOption: 'USER_ENTERED',
+        resource: {
+          values: [row]
+        }
+      });
+
+      console.log('✅ Registro médico actualizado');
+      return response.result;
+    } catch (error) {
+      console.error('❌ Error actualizando registro médico:', error);
+      throw new Error('No se pudo actualizar el registro médico');
+    }
+  }
+
+  /**
    * Inicializa las hojas con headers si no existen
    * Esta función debe ejecutarse manualmente una vez
    */

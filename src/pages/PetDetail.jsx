@@ -53,6 +53,10 @@ const PetDetail = () => {
     navigate(`/pets/${id}/add-history`);
   };
 
+  const handleEditPet = () => {
+    navigate(`/pets/${id}/edit`);
+  };
+
   const handleBack = () => {
     navigate('/pets');
   };
@@ -152,10 +156,20 @@ const PetDetail = () => {
 
       <main className="page-content">
         <div className="pet-detail-container">
-          <PetProfile pet={pet} />
+          <div className="pet-profile-section">
+            <PetProfile pet={pet} />
+            <Button
+              onClick={handleEditPet}
+              variant="outline"
+              fullWidth
+              className="edit-pet-btn"
+            >
+              ✏️ Editar Información
+            </Button>
+          </div>
 
           <div className="history-section">
-            <HistoryList history={history} />
+            <HistoryList history={history} petId={id} />
           </div>
 
           <div className="add-history-cta">

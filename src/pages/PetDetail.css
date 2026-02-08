@@ -37,6 +37,16 @@
   gap: 24px;
 }
 
+.pet-profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.edit-pet-btn {
+  margin-top: 8px;
+}
+
 .history-section {
   width: 100%;
 }

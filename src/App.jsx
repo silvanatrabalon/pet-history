@@ -5,8 +5,10 @@ import { DataProvider } from './context/DataContext';
 import Login from './pages/Login';
 import PetsList from './pages/PetsList';
 import NewPet from './pages/NewPet';
+import EditPet from './pages/EditPet';
 import PetDetail from './pages/PetDetail';
 import AddHistory from './pages/AddHistory';
+import EditHistory from './pages/EditHistory';
 import './App.css';
 
 // Componente para rutas protegidas
@@ -55,6 +57,14 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/pets/:id/edit"
+        element={
+          <ProtectedRoute>
+            <EditPet />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/pets/:id"
         element={
           <ProtectedRoute>
@@ -63,10 +73,18 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/pets/:id/add-history"
+        path="/pets/:petId/add-history"
         element={
           <ProtectedRoute>
             <AddHistory />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pets/:petId/history/:historyId/edit"
+        element={
+          <ProtectedRoute>
+            <EditHistory />
           </ProtectedRoute>
         }
       />

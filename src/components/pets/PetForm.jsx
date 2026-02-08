@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Input from '../common/Input';
 import Button from '../common/Button';
 import { SPECIES, SEX_OPTIONS } from '../../utils/constants';
 import { isImageFile } from '../../utils/helpers';
 import './PetForm.css';
 
-const PetForm = ({ onSubmit, onCancel, loading = false }) => {
+const PetForm = ({ onSubmit, onCancel, loading = false, initialData = null }) => {
   const [formData, setFormData] = useState({
     nombre: '',
     especie: '',
@@ -17,6 +17,26 @@ const PetForm = ({ onSubmit, onCancel, loading = false }) => {
   });
   const [photoPreview, setPhotoPreview] = useState(null);
   const fileInputRef = useRef(null);
+
+  // Cargar datos iniciales si estamos en modo edición
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        nombre: initialData.nombre || '',
+        especie: initialData.especie || '',
+        raza: initialData.raza || '',
+        edad: initialData.edad || '',
+        sexo: initialData.sexo || '',
+        notas: initialData.notas || '',
+        photoFile: null
+      });
+      
+      // Si hay foto existente, mostrarla
+      if (initialData.photoUrl) {
+        setPhotoPreview(initialData.photoUrl);
+      }
+    }
+  }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -181,7 +201,7 @@ const PetForm = ({ onSubmit, onCancel, loading = false }) => {
           disabled={loading}
           fullWidth
         >
-          {loading ? 'Guardando...' : 'Guardar Mascota'}
+          {loading ? 'Guardando...' : (initialData ? 'Actualizar Mascota' : 'Guardar Mascota')}
         </Button>
         
         {onCancel && (

@@ -2,7 +2,7 @@ import React from 'react';
 import HistoryItem from './HistoryItem';
 import './HistoryList.css';
 
-const HistoryList = ({ history }) => {
+const HistoryList = ({ history, petId }) => {
   if (!history || history.length === 0) {
     return (
       <div className="history-empty">
@@ -25,7 +25,7 @@ const HistoryList = ({ history }) => {
       </h2>
       <div className="history-items">
         {sortedHistory.map((record) => (
-          <HistoryItem key={record.historyId} record={record} />
+          <HistoryItem key={record.historyId} record={record} petId={petId} />
         ))}
       </div>
     </div>

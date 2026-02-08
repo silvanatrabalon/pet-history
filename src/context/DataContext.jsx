@@ -179,6 +179,101 @@ export const DataProvider = ({ children }) => {
   };
 
   /**
+   * Actualiza una mascota existente
+   */
+  const updatePet = async (petId, petData) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const updatedPet = {
+        petId: petId,
+        nombre: petData.nombre,
+        especie: petData.especie,
+        raza: petData.raza,
+        edad: petData.edad,
+        sexo: petData.sexo,
+        notas: petData.notas,
+        createdAt: petData.createdAt, // Mantener la fecha de creación original
+        photoUrl: petData.photoUrl || ''
+      };
+
+      // Si hay nueva foto, subirla primero a Drive
+      if (petData.photoFile) {
+        console.log('📤 Subiendo nueva foto de perfil...');
+        const photoUrl = await googleDriveService.uploadImage(petData.photoFile);
+        updatedPet.photoUrl = photoUrl;
+        console.log('✅ Nueva foto de perfil subida');
+      }
+
+      await googleSheetsService.updatePet(petId, updatedPet);
+      
+      // Actualizar estado local
+      setPets(prev => prev.map(pet => pet.petId === petId ? updatedPet : pet));
+      
+      console.log('✅ Mascota actualizada exitosamente');
+      return updatedPet;
+    } catch (err) {
+      console.error('❌ Error actualizando mascota:', err);
+      setError('No se pudo actualizar la mascota');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Actualiza un registro médico existente
+   */
+  const updateMedicalRecord = async (historyId, recordData, newImageFiles = []) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      let imageUrls = recordData.imageUrls || '';
+
+      // Si hay nuevas imágenes, subirlas y combinarlas con las existentes
+      if (newImageFiles.length > 0) {
+        console.log(`📤 Subiendo ${newImageFiles.length} nuevas imágenes...`);
+        const uploadResults = await googleDriveService.uploadMultipleImages(newImageFiles);
+        const newUrls = uploadResults.map(result => result.url);
+        
+        // Combinar URLs existentes con las nuevas
+        const existingUrls = imageUrls ? imageUrls.split(',').filter(url => url.trim()) : [];
+        const allUrls = [...existingUrls, ...newUrls];
+        imageUrls = joinImageUrls(allUrls);
+      }
+
+      const updatedRecord = {
+        historyId: historyId,
+        petId: recordData.petId,
+        fecha: recordData.fecha,
+        diagnostico: recordData.diagnostico,
+        peso: recordData.peso,
+        medicacion: recordData.medicacion,
+        imageUrls: imageUrls,
+        createdAt: recordData.createdAt // Mantener la fecha de creación original
+      };
+
+      await googleSheetsService.updateMedicalRecord(historyId, updatedRecord);
+      
+      // Actualizar estado local
+      setMedicalHistory(prev => prev.map(record => 
+        record.historyId === historyId ? updatedRecord : record
+      ));
+      
+      console.log('✅ Registro médico actualizado exitosamente');
+      return updatedRecord;
+    } catch (err) {
+      console.error('❌ Error actualizando registro médico:', err);
+      setError('No se pudo actualizar el registro médico');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
    * Recarga todos los datos (forzando la actualización)
    */
   const refreshData = async () => {
@@ -195,7 +290,9 @@ export const DataProvider = ({ children }) => {
     getPetHistory,
     getPetById,
     addPet,
+    updatePet,
     addMedicalRecord,
+    updateMedicalRecord,
     refreshData
   };
 

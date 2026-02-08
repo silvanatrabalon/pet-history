@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Input from '../common/Input';
 import Button from '../common/Button';
 import ImageUploader from './ImageUploader';
 import './HistoryForm.css';
 
-const HistoryForm = ({ petId, onSubmit, onCancel, loading = false }) => {
+const HistoryForm = ({ petId, onSubmit, onCancel, loading = false, initialData = null }) => {
   const [formData, setFormData] = useState({
     petId: petId,
     fecha: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
@@ -14,6 +14,19 @@ const HistoryForm = ({ petId, onSubmit, onCancel, loading = false }) => {
   });
 
   const [imageFiles, setImageFiles] = useState([]);
+
+  // Cargar datos iniciales si estamos en modo edición
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        petId: initialData.petId,
+        fecha: initialData.fecha || new Date().toISOString().split('T')[0],
+        diagnostico: initialData.diagnostico || '',
+        peso: initialData.peso || '',
+        medicacion: initialData.medicacion || ''
+      });
+    }
+  }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -84,7 +97,7 @@ const HistoryForm = ({ petId, onSubmit, onCancel, loading = false }) => {
           disabled={loading}
           fullWidth
         >
-          {loading ? 'Guardando...' : 'Guardar Registro'}
+          {loading ? 'Guardando...' : (initialData ? 'Actualizar Registro' : 'Guardar Registro')}
         </Button>
         
         {onCancel && (

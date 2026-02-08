@@ -1,30 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import HistoryForm from '../components/history/HistoryForm';
+import PetForm from '../components/pets/PetForm';
 import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
-import './AddHistory.css';
+import './NewPet.css'; // Reutilizamos los mismos estilos
 
-const AddHistory = () => {
-  const { petId } = useParams();
+const EditPet = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { getPetById, addMedicalRecord, loadPets } = useData();
-  
-  const [pet, setPet] = useState(null);
+  const { getPetById, updatePet, loadPets } = useData();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [pet, setPet] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
     loadPetData();
     // eslint-disable-next-line
-  }, [petId]);
+  }, [id]);
 
   const loadPetData = async () => {
     try {
       await loadPets();
-      const petData = getPetById(petId);
+      const petData = getPetById(id);
       setPet(petData);
     } catch (err) {
       console.error('Error cargando mascota:', err);
@@ -33,14 +32,22 @@ const AddHistory = () => {
     }
   };
 
-  const handleSubmit = async (recordData, imageFiles) => {
+  const handleSubmit = async (formData) => {
     try {
       setLoading(true);
       setError(null);
-      await addMedicalRecord(recordData, imageFiles);
-      navigate(`/pets/${petId}`);
+      
+      // Mantener datos originales que no cambian
+      const updatedData = {
+        ...formData,
+        createdAt: pet.createdAt,
+        photoUrl: pet.photoUrl
+      };
+      
+      await updatePet(id, updatedData);
+      navigate(`/pets/${id}`);
     } catch (err) {
-      setError('Error al guardar el registro. Intenta nuevamente.');
+      setError('Error al actualizar la mascota. Intenta nuevamente.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -48,7 +55,7 @@ const AddHistory = () => {
   };
 
   const handleCancel = () => {
-    navigate(`/pets/${petId}`);
+    navigate(`/pets/${id}`);
   };
 
   if (initialLoading) {
@@ -85,10 +92,7 @@ const AddHistory = () => {
           >
             ← Volver
           </Button>
-          <div className="header-info">
-            <h1 className="page-title">Nuevo Registro</h1>
-            <p className="pet-name-subtitle">{pet.nombre}</p>
-          </div>
+          <h1 className="page-title">Editar Mascota</h1>
         </div>
       </header>
 
@@ -99,18 +103,12 @@ const AddHistory = () => {
               {error}
             </div>
           )}
-
-          {loading && (
-            <div className="loading-overlay">
-              <LoadingSpinner message="Guardando registro y subiendo imágenes..." />
-            </div>
-          )}
           
-          <HistoryForm
-            petId={petId}
+          <PetForm
             onSubmit={handleSubmit}
             onCancel={handleCancel}
             loading={loading}
+            initialData={pet}
           />
         </div>
       </main>
@@ -118,4 +116,4 @@ const AddHistory = () => {
   );
 };
 
-export default AddHistory;
+export default EditPet;

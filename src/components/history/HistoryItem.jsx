@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { formatDate, splitImageUrls } from '../../utils/helpers';
 import './HistoryItem.css';
 
-const HistoryItem = ({ record }) => {
+const HistoryItem = ({ record, petId }) => {
+  const navigate = useNavigate();
   const imageUrls = splitImageUrls(record.imageUrls);
   const [showGallery, setShowGallery] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const handleEdit = () => {
+    navigate(`/pets/${petId}/history/${record.historyId}/edit`);
+  };
 
   const openGallery = (index = 0) => {
     setCurrentImageIndex(index);
@@ -35,6 +41,13 @@ const HistoryItem = ({ record }) => {
       <div className="history-item">
         <div className="history-header">
           <span className="history-date">{formatDate(record.fecha)}</span>
+          <button 
+            onClick={handleEdit} 
+            className="edit-history-btn"
+            title="Editar registro"
+          >
+            ✏️
+          </button>
         </div>
 
         {record.diagnostico && (

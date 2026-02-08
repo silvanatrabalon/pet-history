@@ -4,43 +4,51 @@ import { useData } from '../context/DataContext';
 import HistoryForm from '../components/history/HistoryForm';
 import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
-import './AddHistory.css';
+import './AddHistory.css'; // Reutilizamos los mismos estilos
 
-const AddHistory = () => {
-  const { petId } = useParams();
+const EditHistory = () => {
+  const { petId, historyId } = useParams();
   const navigate = useNavigate();
-  const { getPetById, addMedicalRecord, loadPets } = useData();
+  const { updateMedicalRecord, loadMedicalHistory, medicalHistory } = useData();
   
-  const [pet, setPet] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [record, setRecord] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
-    loadPetData();
+    loadRecordData();
     // eslint-disable-next-line
-  }, [petId]);
+  }, [historyId]);
 
-  const loadPetData = async () => {
+  const loadRecordData = async () => {
     try {
-      await loadPets();
-      const petData = getPetById(petId);
-      setPet(petData);
+      await loadMedicalHistory();
+      const recordData = medicalHistory.find(r => r.historyId === historyId);
+      setRecord(recordData);
     } catch (err) {
-      console.error('Error cargando mascota:', err);
+      console.error('Error cargando registro:', err);
     } finally {
       setInitialLoading(false);
     }
   };
 
-  const handleSubmit = async (recordData, imageFiles) => {
+  const handleSubmit = async (formData, imageFiles) => {
     try {
       setLoading(true);
       setError(null);
-      await addMedicalRecord(recordData, imageFiles);
+      
+      // Mantener datos originales que no cambian
+      const updatedData = {
+        ...formData,
+        createdAt: record.createdAt,
+        imageUrls: record.imageUrls
+      };
+      
+      await updateMedicalRecord(historyId, updatedData, imageFiles);
       navigate(`/pets/${petId}`);
     } catch (err) {
-      setError('Error al guardar el registro. Intenta nuevamente.');
+      setError('Error al actualizar el registro. Intenta nuevamente.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -59,16 +67,16 @@ const AddHistory = () => {
     );
   }
 
-  if (!pet) {
+  if (!record) {
     return (
       <div className="page">
         <header className="page-header">
-          <Button onClick={() => navigate('/pets')} variant="outline">
+          <Button onClick={() => navigate(`/pets/${petId}`)} variant="outline">
             ← Volver
           </Button>
         </header>
         <div className="page-content">
-          <p>Mascota no encontrada</p>
+          <p>Registro no encontrado</p>
         </div>
       </div>
     );
@@ -78,17 +86,10 @@ const AddHistory = () => {
     <div className="page">
       <header className="page-header">
         <div className="header-content">
-          <Button
-            onClick={handleCancel}
-            variant="outline"
-            className="back-btn"
-          >
+          <Button onClick={handleCancel} variant="outline" className="back-btn">
             ← Volver
           </Button>
-          <div className="header-info">
-            <h1 className="page-title">Nuevo Registro</h1>
-            <p className="pet-name-subtitle">{pet.nombre}</p>
-          </div>
+          <h1 className="page-title">Editar Registro Médico</h1>
         </div>
       </header>
 
@@ -99,18 +100,13 @@ const AddHistory = () => {
               {error}
             </div>
           )}
-
-          {loading && (
-            <div className="loading-overlay">
-              <LoadingSpinner message="Guardando registro y subiendo imágenes..." />
-            </div>
-          )}
           
           <HistoryForm
             petId={petId}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
             loading={loading}
+            initialData={record}
           />
         </div>
       </main>
@@ -118,4 +114,4 @@ const AddHistory = () => {
   );
 };
 
-export default AddHistory;
+export default EditHistory;

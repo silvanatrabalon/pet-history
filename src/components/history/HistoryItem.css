@@ -10,6 +10,9 @@
 
 .history-header {
   margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .history-date {
@@ -18,6 +21,29 @@
   color: #4F46E5;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.edit-history-btn {
+  background: #F3F4F6;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-history-btn:hover {
+  background: #E5E7EB;
+  transform: scale(1.1);
+}
+
+.edit-history-btn:active {
+  transform: scale(0.95);
 }
 
 .history-section {
