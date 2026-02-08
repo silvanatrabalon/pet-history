@@ -11,7 +11,9 @@ const HistoryTimeline = ({ history, petId }) => {
     new Date(b.fecha) - new Date(a.fecha)
   );
 
-  const handleRecordClick = (record) => {
+  const handleRecordClick = (record, e) => {
+    e.preventDefault();
+    e.stopPropagation();
     setSelectedRecord(record);
   };
 
@@ -35,7 +37,7 @@ const HistoryTimeline = ({ history, petId }) => {
           <div 
             key={record.historyId} 
             className="timeline-item"
-            onClick={() => handleRecordClick(record)}
+            onClick={(e) => handleRecordClick(record, e)}
           >
             <div className="timeline-marker">
               <div className="timeline-dot"></div>
