@@ -160,12 +160,12 @@ class GoogleSheetsService {
         // Modo autenticado: usar gapi client
         const response = await window.gapi.client.sheets.spreadsheets.values.get({
           spreadsheetId: SPREADSHEET_ID,
-          range: `${SHEETS.VETS}!A2:C`,
+          range: `${SHEETS.VETS}!A2:D`,
         });
         rows = response.result.values || [];
       } else {
         // Modo observador: usar API key con fetch
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEETS.VETS}!A2:C?key=${API_KEY}`;
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEETS.VETS}!A2:D?key=${API_KEY}`;
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -179,7 +179,8 @@ class GoogleSheetsService {
         rowIndex: index + 2, // La fila real en la sheet (empezando desde 2)
         nombre: row[0] || '',
         especialidad: row[1] || '',
-        contacto: row[2] || ''
+        contacto: row[2] || '',
+        link: row[3] || ''
       }));
 
       console.log(`✅ ${vets.length} veterinarias leídas, muestra:`, vets.slice(0, 2));
@@ -199,12 +200,13 @@ class GoogleSheetsService {
       const row = [
         vetData.nombre,
         vetData.especialidad || '',
-        vetData.contacto || ''
+        vetData.contacto || '',
+        vetData.link || ''
       ];
 
       const response = await window.gapi.client.sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEETS.VETS}!A:C`,
+        range: `${SHEETS.VETS}!A:D`,
         valueInputOption: 'USER_ENTERED',
         resource: {
           values: [row]

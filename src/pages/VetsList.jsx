@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import Input from '../components/common/Input';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -8,6 +9,7 @@ import './VetsList.css';
 
 const VetsList = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const { vets, loadVets, addVet, updateVet, deleteVet, loading } = useData();
   const [showModal, setShowModal] = useState(false);
   const [editingVet, setEditingVet] = useState(null);
@@ -15,7 +17,8 @@ const VetsList = () => {
   const [formData, setFormData] = useState({
     nombre: '',
     especialidad: '',
-    contacto: ''
+    contacto: '',
+    link: ''
   });
   const [formLoading, setFormLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
@@ -34,7 +37,7 @@ const VetsList = () => {
   const openAddModal = () => {
     setEditingVet(null);
     setEditingRowIndex(null);
-    setFormData({ nombre: '', especialidad: '', contacto: '' });
+    setFormData({ nombre: '', especialidad: '', contacto: '', link: '' });
     setShowModal(true);
   };
 
@@ -45,7 +48,8 @@ const VetsList = () => {
     setFormData({
       nombre: vet.nombre,
       especialidad: vet.especialidad,
-      contacto: vet.contacto
+      contacto: vet.contacto,
+      link: vet.link || ''
     });
     setShowModal(true);
   };
@@ -54,7 +58,7 @@ const VetsList = () => {
     setShowModal(false);
     setEditingVet(null);
     setEditingRowIndex(null);
-    setFormData({ nombre: '', especialidad: '', contacto: '' });
+    setFormData({ nombre: '', especialidad: '', contacto: '', link: '' });
   };
 
   const handleChange = (e) => {
@@ -108,12 +112,14 @@ const VetsList = () => {
             ← Volver
           </Button>
           <h1 className="page-title">Veterinarias</h1>
-          <button 
-            onClick={openAddModal} 
-            className="add-vet-btn"
-          >
-            + Agregar
-          </button>
+          {isAuthenticated && (
+            <button 
+              onClick={openAddModal} 
+              className="add-vet-btn"
+            >
+              + Agregar
+            </button>
+          )}
         </div>
       </header>
 
@@ -136,22 +142,24 @@ const VetsList = () => {
               <div key={`${vet.rowIndex}-${vet.nombre}-${index}`} className="vet-card">
                 <div className="vet-card-header">
                   <h3 className="vet-name">{vet.nombre}</h3>
-                  <div className="vet-actions">
-                    <button 
-                      className="vet-action-btn edit" 
-                      onClick={() => openEditModal(vet)}
-                      title="Editar"
-                    >
-                      ✏️
-                    </button>
-                    <button 
-                      className="vet-action-btn delete" 
-                      onClick={() => setShowDeleteConfirm(vet)}
-                      title="Eliminar"
-                    >
-                      🗑️
-                    </button>
-                  </div>
+                  {isAuthenticated && (
+                    <div className="vet-actions">
+                      <button 
+                        className="vet-action-btn edit" 
+                        onClick={() => openEditModal(vet)}
+                        title="Editar"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        className="vet-action-btn delete" 
+                        onClick={() => setShowDeleteConfirm(vet)}
+                        title="Eliminar"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  )}
                 </div>
                 {vet.especialidad && (
                   <p className="vet-detail">
@@ -160,7 +168,14 @@ const VetsList = () => {
                 )}
                 {vet.contacto && (
                   <p className="vet-detail">
-                    <span className="vet-label">Contacto:</span> {vet.contacto}
+                    <span className="vet-label">Contacto:</span> 
+                    {vet.link ? (
+                      <a href={vet.link} target="_blank" rel="noopener noreferrer" className="vet-whatsapp-link">
+                        {vet.contacto} 💬
+                      </a>
+                    ) : (
+                      vet.contacto
+                    )}
                   </p>
                 )}
               </div>
@@ -199,6 +214,14 @@ const VetsList = () => {
                 value={formData.contacto}
                 onChange={handleChange}
                 placeholder="Teléfono o email"
+              />
+              
+              <Input
+                label="Link de WhatsApp"
+                name="link"
+                value={formData.link}
+                onChange={handleChange}
+                placeholder="https://wa.me/..."
               />
 
               <div className="modal-actions">

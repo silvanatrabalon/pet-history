@@ -82,14 +82,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/vets"
-        element={
-          <ProtectedRoute>
-            <VetsList />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/vets" element={<VetsList />} />
       <Route path="/" element={<Navigate to="/pets" replace />} />
       <Route path="*" element={<Navigate to="/pets" replace />} />
     </Routes>

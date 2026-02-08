@@ -26,11 +26,6 @@ const PetsList = () => {
   };
 
   const handleVets = () => {
-    if (!isAuthenticated) {
-      alert('Debes iniciar sesión para gestionar veterinarias');
-      setMenuOpen(false);
-      return;
-    }
     setMenuOpen(false);
     navigate('/vets');
   };
@@ -75,17 +70,15 @@ const PetsList = () => {
               <>
                 <div className="menu-overlay" onClick={() => setMenuOpen(false)}></div>
                 <div className="dropdown-menu">
+                  <button onClick={handleVets} className="menu-item">
+                    <span className="menu-icon">🏥</span>
+                    <span>Veterinarias</span>
+                  </button>
                   {isAuthenticated ? (
-                    <>
-                      <button onClick={handleVets} className="menu-item">
-                        <span className="menu-icon">🏥</span>
-                        <span>Veterinarias</span>
-                      </button>
-                      <button onClick={handleLogout} className="menu-item logout">
-                        <span className="menu-icon">🚪</span>
-                        <span>Salir</span>
-                      </button>
-                    </>
+                    <button onClick={handleLogout} className="menu-item logout">
+                      <span className="menu-icon">🚪</span>
+                      <span>Salir</span>
+                    </button>
                   ) : (
                     <button onClick={handleLogin} className="menu-item">
                       <span className="menu-icon">🔑</span>

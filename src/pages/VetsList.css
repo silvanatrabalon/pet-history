@@ -163,6 +163,21 @@
   color: #374151;
 }
 
+.vet-whatsapp-link {
+  color: #25D366;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.vet-whatsapp-link:hover {
+  color: #128C7E;
+  text-decoration: underline;
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;
