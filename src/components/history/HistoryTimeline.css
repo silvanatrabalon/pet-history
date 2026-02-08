@@ -1,0 +1,124 @@
+/* History Timeline Styles */
+
+.history-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 16px 20px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 16px;
+  cursor: pointer;
+  padding: 16px 0;
+  transition: all 0.2s ease;
+}
+
+.timeline-item:active {
+  transform: scale(0.98);
+}
+
+.timeline-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 24px;
+}
+
+.timeline-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+  flex-shrink: 0;
+}
+
+.timeline-line {
+  width: 2px;
+  flex: 1;
+  background: linear-gradient(to bottom, #E5E7EB, transparent);
+  margin-top: 8px;
+}
+
+.timeline-content {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  transition: all 0.2s ease;
+  min-height: 70px;
+}
+
+.timeline-item:hover .timeline-content {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateX(4px);
+}
+
+.timeline-date {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4F46E5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.timeline-diagnosis {
+  font-size: 15px;
+  color: #374151;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.timeline-arrow {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  color: #D1D5DB;
+}
+
+.timeline-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.timeline-empty .empty-icon {
+  font-size: 64px;
+  opacity: 0.3;
+  margin-bottom: 16px;
+}
+
+.timeline-empty .empty-text {
+  font-size: 14px;
+  color: #6B7280;
+  margin: 0;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .history-timeline {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  .timeline-diagnosis {
+    font-size: 16px;
+  }
+}

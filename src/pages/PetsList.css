@@ -2,7 +2,7 @@
 
 .page {
   min-height: 100vh;
-  background: #F9FAFB;
+  background: #FFF5F7;
   padding-bottom: 80px; /* Espacio para FAB */
 }
 
@@ -73,8 +73,9 @@
 
 .pets-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 4px;
 }
 
 .empty-state {

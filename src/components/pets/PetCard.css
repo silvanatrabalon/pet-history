@@ -1,33 +1,39 @@
 /* Pet Card Component Styles - Mobile First */
 
 .pet-card {
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  aspect-ratio: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 8px;
 }
 
 .pet-card:active {
-  transform: scale(0.98);
+  transform: scale(0.95);
 }
 
-.pet-card:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+.pet-card-circle {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: white;
+  position: relative;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.pet-card:hover .pet-card-circle {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .pet-card-photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .pet-card-placeholder {
@@ -37,31 +43,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .pet-placeholder-icon {
-  font-size: 64px;
+  font-size: 40px;
   opacity: 0.9;
 }
 
 .pet-card-name {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-  color: white;
-  padding: 24px 12px 12px 12px;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
   text-align: center;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
+  line-height: 1.3;
 }
 
 /* Desktop */
@@ -75,10 +73,10 @@
   }
   
   .pet-card-name {
-    font-size: 18px;
+    font-size: 15px;
   }
   
   .pet-placeholder-icon {
-    font-size: 80px;
+    font-size: 50px;
   }
 }

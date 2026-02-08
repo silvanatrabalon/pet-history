@@ -13,19 +13,21 @@ const PetCard = ({ pet }) => {
 
   return (
     <div className="pet-card" onClick={handleClick}>
-      {pet.photoUrl ? (
-        <img 
-          src={pet.photoUrl} 
-          alt={displayName} 
-          className="pet-card-photo"
-        />
-      ) : (
-        <div className="pet-card-placeholder">
-          <span className="pet-placeholder-icon">
-            {pet.especie === 'Perro' ? '🐕' : pet.especie === 'Gato' ? '🐱' : '🐾'}
-          </span>
-        </div>
-      )}
+      <div className="pet-card-circle">
+        {pet.photoUrl ? (
+          <img 
+            src={pet.photoUrl} 
+            alt={displayName} 
+            className="pet-card-photo"
+          />
+        ) : (
+          <div className="pet-card-placeholder">
+            <span className="pet-placeholder-icon">
+              {pet.especie === 'Perro' ? '🐕' : pet.especie === 'Gato' ? '🐱' : '🐾'}
+            </span>
+          </div>
+        )}
+      </div>
       <div className="pet-card-name">
         {displayName}
       </div>

@@ -10,7 +10,9 @@ export const generateId = () => {
  */
 export const formatDate = (dateString) => {
   if (!dateString) return '';
-  const date = new Date(dateString);
+  // Parsear fecha como local para evitar problemas de zona horaria
+  const [year, month, day] = dateString.split('-').map(num => parseInt(num, 10));
+  const date = new Date(year, month - 1, day);
   return date.toLocaleDateString('es-AR', {
     year: 'numeric',
     month: 'long',

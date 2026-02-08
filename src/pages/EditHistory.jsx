@@ -46,7 +46,7 @@ const EditHistory = () => {
       };
       
       await updateMedicalRecord(historyId, updatedData, imageFiles);
-      navigate(`/pets/${petId}`);
+      navigate(`/pets/${petId}?tab=history`);
     } catch (err) {
       setError('Error al actualizar el registro. Intenta nuevamente.');
       console.error(err);
@@ -56,7 +56,7 @@ const EditHistory = () => {
   };
 
   const handleCancel = () => {
-    navigate(`/pets/${petId}`);
+    navigate(`/pets/${petId}?tab=history`);
   };
 
   if (initialLoading) {
@@ -71,7 +71,7 @@ const EditHistory = () => {
     return (
       <div className="page">
         <header className="page-header">
-          <Button onClick={() => navigate(`/pets/${petId}`)} variant="outline">
+          <Button onClick={() => navigate(`/pets/${petId}?tab=history`)} variant="outline">
             ← Volver
           </Button>
         </header>

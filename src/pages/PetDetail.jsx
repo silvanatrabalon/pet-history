@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import PetProfile from '../components/pets/PetProfile';
-import HistoryList from '../components/history/HistoryList';
+import HistoryTimeline from '../components/history/HistoryTimeline';
 import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
@@ -11,11 +11,13 @@ import './PetDetail.css';
 const PetDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { getPetById, getPetHistory, loadPets, loadMedicalHistory, loading, pets, medicalHistory } = useData();
   
   const [pet, setPet] = useState(null);
   const [history, setHistory] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'profile'); // Leer tab de URL
 
   // Efecto para cargar datos iniciales
   useEffect(() => {
@@ -59,6 +61,11 @@ const PetDetail = () => {
 
   const handleBack = () => {
     navigate('/pets');
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
   };
 
   const handleShare = async () => {
@@ -156,33 +163,60 @@ const PetDetail = () => {
 
       <main className="page-content">
         <div className="pet-detail-container">
-          <div className="pet-profile-section">
-            <PetProfile pet={pet} />
-            <Button
-              onClick={handleEditPet}
-              variant="outline"
-              fullWidth
-              className="edit-pet-btn"
-            >
-              ✏️ Editar Información
-            </Button>
-          </div>
+          {/* Tab de Perfil */}
+          {activeTab === 'profile' && (
+            <div className="pet-profile-section">
+              <PetProfile pet={pet} />
+              <Button
+                onClick={handleEditPet}
+                variant="outline"
+                fullWidth
+                className="edit-pet-btn"
+              >
+                ✏️ Editar Información
+              </Button>
+            </div>
+          )}
 
-          <div className="history-section">
-            <HistoryList history={history} petId={id} />
-          </div>
-
-          <div className="add-history-cta">
-            <Button
-              onClick={handleAddHistory}
-              variant="primary"
-              fullWidth
-            >
-              + Agregar Registro Médico
-            </Button>
-          </div>
+          {/* Tab de Historial */}
+          {activeTab === 'history' && (
+            <div className="history-section">
+              <HistoryTimeline history={history} petId={id} />
+            </div>
+          )}
         </div>
       </main>
+
+      {/* Bottom Tab Navigator */}
+      <nav className="bottom-tab-navigator">
+        <button
+          className={`tab-item ${activeTab === 'profile' ? 'active' : ''}`}
+          onClick={() => handleTabChange('profile')}
+        >
+          <span className="tab-icon">🐾</span>
+          <span className="tab-label">Info</span>
+        </button>
+        <button
+          className={`tab-item ${activeTab === 'history' ? 'active' : ''}`}
+          onClick={() => handleTabChange('history')}
+        >
+          <span className="tab-icon">📋</span>
+          <span className="tab-label">Historial</span>
+        </button>
+      </nav>
+
+      {/* FAB solo visible en tab de historial */}
+      {activeTab === 'history' && (
+        <div className="fab-container">
+          <button
+            onClick={handleAddHistory}
+            className="fab"
+            aria-label="Agregar registro médico"
+          >
+            +
+          </button>
+        </div>
+      )}
     </div>
   );
 };
