@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
-import Login from './pages/Login';
 import PetsList from './pages/PetsList';
 import NewPet from './pages/NewPet';
 import EditPet from './pages/EditPet';

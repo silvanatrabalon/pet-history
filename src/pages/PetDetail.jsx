@@ -78,65 +78,6 @@ const PetDetail = () => {
     setSearchParams({ tab });
   };
 
-  const handleShare = async () => {
-    const url = window.location.href;
-    const shareData = {
-      title: `Historial de ${pet?.nombre}`,
-      text: `Mira el historial clínico de ${pet?.nombre}`,
-      url: url
-    };
-    
-    // Verificar si Web Share API está disponible y soporta los datos
-    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData);
-        console.log('✅ Contenido compartido exitosamente');
-      } catch (err) {
-        // El usuario canceló el compartir o hubo un error
-        if (err.name !== 'AbortError') {
-          console.error('Error sharing:', err);
-          // Fallback a copiar al portapapeles
-          copyToClipboard(url);
-        }
-      }
-    } else {
-      // Fallback: copiar al portapapeles
-      copyToClipboard(url);
-    }
-  };
-
-  const copyToClipboard = (text) => {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text)
-        .then(() => {
-          alert('✅ Link copiado al portapapeles');
-        })
-        .catch((err) => {
-          console.error('Error copiando:', err);
-          fallbackCopy(text);
-        });
-    } else {
-      fallbackCopy(text);
-    }
-  };
-
-  const fallbackCopy = (text) => {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
-    document.body.appendChild(textArea);
-    textArea.select();
-    try {
-      document.execCommand('copy');
-      alert('✅ Link copiado al portapapeles');
-    } catch (err) {
-      console.error('Error copiando:', err);
-      alert('No se pudo copiar el link');
-    }
-    document.body.removeChild(textArea);
-  };
-
   if (dataLoading || loading) {
     return (
       <div className="page">
