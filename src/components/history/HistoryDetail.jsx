@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
+import { useAuth } from '../../context/AuthContext';
 import { formatDate, splitImageUrls } from '../../utils/helpers';
 import googleDriveService from '../../services/googleDrive';
 import './HistoryDetail.css';
@@ -8,6 +9,7 @@ import './HistoryDetail.css';
 const HistoryDetail = ({ record, petId, onClose }) => {
   const navigate = useNavigate();
   const { vets, loadVets } = useData();
+  const { isAuthenticated } = useAuth();
   const imageUrls = splitImageUrls(record.imageUrls);
   const [showGallery, setShowGallery] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -69,6 +71,10 @@ const HistoryDetail = ({ record, petId, onClose }) => {
   }, [showGallery, currentImageIndex]);
 
   const handleEdit = () => {
+    if (!isAuthenticated) {
+      alert('Debes iniciar sesión para editar');
+      return;
+    }
     navigate(`/pets/${petId}/history/${record.historyId}/edit`);
   };
 
@@ -196,9 +202,11 @@ const HistoryDetail = ({ record, petId, onClose }) => {
           </div>
 
           <div className="history-detail-actions">
-            <button className="detail-action-btn edit" onClick={handleEdit}>
-              ✏️ Editar
-            </button>
+            {isAuthenticated && (
+              <button className="detail-action-btn edit" onClick={handleEdit}>
+                ✏️ Editar
+              </button>
+            )}
             <button className="detail-action-btn close" onClick={onClose}>
               Cerrar
             </button>

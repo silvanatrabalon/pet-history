@@ -1,6 +1,7 @@
 // Google Sheets configuration
 export const SPREADSHEET_ID = process.env.REACT_APP_SPREADSHEET_ID;
 export const DRIVE_FOLDER_ID = process.env.REACT_APP_DRIVE_FOLDER_ID;
+export const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 // Google Sheets ranges
 export const SHEETS = {
@@ -18,7 +19,7 @@ export const SCOPES = [
 ].join(' ');
 
 // Pet species options
-export const SPECIES = ['Perro', 'Gato', 'Ave', 'Conejo', 'Otro'];
+export const SPECIES = ['Perro', 'Gato'];
 
 // Pet sex options
 export const SEX_OPTIONS = ['Macho', 'Hembra'];

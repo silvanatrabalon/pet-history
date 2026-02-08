@@ -20,7 +20,7 @@ class GoogleAuthService {
   /**
    * Inicializa Google API Client
    */
-  initGapi() {
+  initGapi(apiKey = null) {
     return new Promise((resolve, reject) => {
       if (this.gapiInited) {
         resolve();
@@ -29,12 +29,19 @@ class GoogleAuthService {
 
       window.gapi.load('client', async () => {
         try {
-          await window.gapi.client.init({
+          const config = {
             discoveryDocs: [
               'https://sheets.googleapis.com/$discovery/rest?version=v4',
               'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
             ]
-          });
+          };
+          
+          // Si hay API key, la agregamos para modo observador
+          if (apiKey) {
+            config.apiKey = apiKey;
+          }
+          
+          await window.gapi.client.init(config);
           this.gapiInited = true;
           console.log('✅ Google API Client inicializado');
           resolve();
@@ -71,9 +78,9 @@ class GoogleAuthService {
   /**
    * Inicializa ambos servicios de Google
    */
-  async initialize() {
+  async initialize(apiKey = null) {
     try {
-      await this.initGapi();
+      await this.initGapi(apiKey);
       await this.initGIS();
       return true;
     } catch (error) {
@@ -145,12 +152,18 @@ class GoogleAuthService {
         throw new Error('No hay token de acceso');
       }
 
-      // Usar Google API Client en lugar de fetch directo
-      const response = await window.gapi.client.request({
-        path: 'https://www.googleapis.com/oauth2/v3/userinfo'
+      // Usar fetch directo con el token OAuth (no usar gapi.client que tiene API key)
+      const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`
+        }
       });
 
-      const userInfo = response.result;
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const userInfo = await response.json();
       return {
         email: userInfo.email,
         name: userInfo.name,

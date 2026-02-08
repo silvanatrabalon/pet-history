@@ -12,7 +12,7 @@ import EditHistory from './pages/EditHistory';
 import VetsList from './pages/VetsList';
 import './App.css';
 
-// Componente para rutas protegidas
+// Componente para rutas protegidas (modo edición)
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading, isInitialized } = useAuth();
 
@@ -25,7 +25,8 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    alert('Debes iniciar sesión para editar');
+    return <Navigate to="/pets" replace />;
   }
 
   return children;
@@ -33,22 +34,23 @@ const ProtectedRoute = ({ children }) => {
 
 // Componente de rutas
 const AppRoutes = () => {
-  const { isAuthenticated } = useAuth();
+  const { loading, isInitialized } = useAuth();
+
+  if (!isInitialized || loading) {
+    return (
+      <div className="app-loading">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
 
   return (
     <Routes>
-      <Route
-        path="/login"
-        element={isAuthenticated ? <Navigate to="/pets" replace /> : <Login />}
-      />
-      <Route
-        path="/pets"
-        element={
-          <ProtectedRoute>
-            <PetsList />
-          </ProtectedRoute>
-        }
-      />
+      {/* Rutas públicas (modo observador) */}
+      <Route path="/pets" element={<PetsList />} />
+      <Route path="/pets/:id" element={<PetDetail />} />
+      
+      {/* Rutas protegidas (requieren autenticación para editar) */}
       <Route
         path="/pets/new"
         element={
@@ -62,14 +64,6 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <EditPet />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/pets/:id"
-        element={
-          <ProtectedRoute>
-            <PetDetail />
           </ProtectedRoute>
         }
       />

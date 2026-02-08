@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 import PetProfile from '../components/pets/PetProfile';
 import HistoryTimeline from '../components/history/HistoryTimeline';
 import Button from '../components/common/Button';
@@ -13,6 +14,7 @@ const PetDetail = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { getPetById, getPetHistory, loadPets, loadMedicalHistory, loading, pets, medicalHistory } = useData();
+  const { isAuthenticated } = useAuth();
   
   const [pet, setPet] = useState(null);
   const [history, setHistory] = useState([]);
@@ -52,10 +54,18 @@ const PetDetail = () => {
   };
 
   const handleAddHistory = () => {
+    if (!isAuthenticated) {
+      alert('Debes iniciar sesión para agregar registros');
+      return;
+    }
     navigate(`/pets/${id}/add-history`);
   };
 
   const handleEditPet = () => {
+    if (!isAuthenticated) {
+      alert('Debes iniciar sesión para editar');
+      return;
+    }
     navigate(`/pets/${id}/edit`);
   };
 
@@ -151,13 +161,10 @@ const PetDetail = () => {
   return (
     <div className="page">
       <header className="page-header">
-        <div className="header-content header-with-actions">
+        <div className="header-content">
           <Button onClick={handleBack} variant="outline" className="back-btn">
             ← Volver
           </Button>
-          <button onClick={handleShare} className="share-btn" title="Compartir">
-            🔗
-          </button>
         </div>
       </header>
 
@@ -167,14 +174,16 @@ const PetDetail = () => {
           {activeTab === 'profile' && (
             <div className="pet-profile-section">
               <PetProfile pet={pet} />
-              <Button
-                onClick={handleEditPet}
-                variant="outline"
-                fullWidth
-                className="edit-pet-btn"
-              >
-                ✏️ Editar Información
-              </Button>
+              {isAuthenticated && (
+                <Button
+                  onClick={handleEditPet}
+                  variant="outline"
+                  fullWidth
+                  className="edit-pet-btn"
+                >
+                  ✏️ Editar Información
+                </Button>
+              )}
             </div>
           )}
 
@@ -205,8 +214,8 @@ const PetDetail = () => {
         </button>
       </nav>
 
-      {/* FAB solo visible en tab de historial */}
-      {activeTab === 'history' && (
+      {/* FAB solo visible en tab de historial y si está autenticado */}
+      {activeTab === 'history' && isAuthenticated && (
         <div className="fab-container">
           <button
             onClick={handleAddHistory}

@@ -3,7 +3,7 @@
  * Gestiona la lectura y escritura de datos de mascotas e historial médico
  */
 
-import { SPREADSHEET_ID, SHEETS } from '../utils/constants';
+import { SPREADSHEET_ID, SHEETS, API_KEY } from '../utils/constants';
 
 class GoogleSheetsService {
   /**
@@ -11,12 +11,27 @@ class GoogleSheetsService {
    */
   async getPets() {
     try {
-      const response = await window.gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEETS.PETS}!A2:J`, // A-J: petId, nombre, nickname, especie, raza, nacimiento, sexo, notas, createdAt, photoUrl
-      });
-
-      const rows = response.result.values || [];
+      // Verificar si hay token OAuth, sino usar API key
+      const hasAuth = window.gapi.client.getToken();
+      let rows = [];
+      
+      if (hasAuth) {
+        // Modo autenticado: usar gapi client
+        const response = await window.gapi.client.sheets.spreadsheets.values.get({
+          spreadsheetId: SPREADSHEET_ID,
+          range: `${SHEETS.PETS}!A2:J`,
+        });
+        rows = response.result.values || [];
+      } else {
+        // Modo observador: usar API key con fetch
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEETS.PETS}!A2:J?key=${API_KEY}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const data = await response.json();
+        rows = data.values || [];
+      }
       
       // Mapear rows a objetos Pet
       const pets = rows.map(row => ({
@@ -80,12 +95,27 @@ class GoogleSheetsService {
    */
   async getMedicalHistory() {
     try {
-      const response = await window.gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEETS.MEDICAL_HISTORY}!A2:J`,
-      });
-
-      const rows = response.result.values || [];
+      // Verificar si hay token OAuth, sino usar API key
+      const hasAuth = window.gapi.client.getToken();
+      let rows = [];
+      
+      if (hasAuth) {
+        // Modo autenticado: usar gapi client
+        const response = await window.gapi.client.sheets.spreadsheets.values.get({
+          spreadsheetId: SPREADSHEET_ID,
+          range: `${SHEETS.MEDICAL_HISTORY}!A2:J`,
+        });
+        rows = response.result.values || [];
+      } else {
+        // Modo observador: usar API key con fetch
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEETS.MEDICAL_HISTORY}!A2:J?key=${API_KEY}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const data = await response.json();
+        rows = data.values || [];
+      }
       
       // Mapear rows a objetos MedicalHistory
       const history = rows.map(row => ({
@@ -122,12 +152,27 @@ class GoogleSheetsService {
    */
   async getVets() {
     try {
-      const response = await window.gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEETS.VETS}!A2:C`,
-      });
-
-      const rows = response.result.values || [];
+      // Verificar si hay token OAuth, sino usar API key
+      const hasAuth = window.gapi.client.getToken();
+      let rows = [];
+      
+      if (hasAuth) {
+        // Modo autenticado: usar gapi client
+        const response = await window.gapi.client.sheets.spreadsheets.values.get({
+          spreadsheetId: SPREADSHEET_ID,
+          range: `${SHEETS.VETS}!A2:C`,
+        });
+        rows = response.result.values || [];
+      } else {
+        // Modo observador: usar API key con fetch
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEETS.VETS}!A2:C?key=${API_KEY}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const data = await response.json();
+        rows = data.values || [];
+      }
       
       // Mapear rows a objetos Vet con índice para poder identificarlos
       const vets = rows.map((row, index) => ({

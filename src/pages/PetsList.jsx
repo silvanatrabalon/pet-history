@@ -10,7 +10,7 @@ import './PetsList.css';
 
 const PetsList = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, login, logout, isAuthenticated } = useAuth();
   const { pets, loading, error, loadPets } = useData();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -19,18 +19,35 @@ const PetsList = () => {
   }, [loadPets]);
 
   const handleAddPet = () => {
+    if (!isAuthenticated) {
+      alert('Debes iniciar sesión para agregar mascotas');
+      return;
+    }
     navigate('/pets/new');
   };
 
   const handleVets = () => {
+    if (!isAuthenticated) {
+      alert('Debes iniciar sesión para gestionar veterinarias');
+      setMenuOpen(false);
+      return;
+    }
     setMenuOpen(false);
     navigate('/vets');
+  };
+
+  const handleLogin = async () => {
+    setMenuOpen(false);
+    try {
+      await login();
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+    }
   };
 
   const handleLogout = () => {
     setMenuOpen(false);
     logout();
-    navigate('/login');
   };
 
   const toggleMenu = () => {
@@ -43,8 +60,10 @@ const PetsList = () => {
         <div className="header-content">
           <div className="header-left">
             <h1 className="page-title">Mis Mascotas</h1>
-            {user && (
+            {user ? (
               <p className="user-email">{user.email}</p>
+            ) : (
+              <p className="user-email">Modo Observador</p>
             )}
           </div>
           <div className="header-menu">
@@ -57,14 +76,23 @@ const PetsList = () => {
               <>
                 <div className="menu-overlay" onClick={() => setMenuOpen(false)}></div>
                 <div className="dropdown-menu">
-                  <button onClick={handleVets} className="menu-item">
-                    <span className="menu-icon">🏥</span>
-                    <span>Veterinarias</span>
-                  </button>
-                  <button onClick={handleLogout} className="menu-item logout">
-                    <span className="menu-icon">🚪</span>
-                    <span>Salir</span>
-                  </button>
+                  {isAuthenticated ? (
+                    <>
+                      <button onClick={handleVets} className="menu-item">
+                        <span className="menu-icon">🏥</span>
+                        <span>Veterinarias</span>
+                      </button>
+                      <button onClick={handleLogout} className="menu-item logout">
+                        <span className="menu-icon">🚪</span>
+                        <span>Salir</span>
+                      </button>
+                    </>
+                  ) : (
+                    <button onClick={handleLogin} className="menu-item">
+                      <span className="menu-icon">🔑</span>
+                      <span>Iniciar Sesión</span>
+                    </button>
+                  )}
                 </div>
               </>
             )}
@@ -96,15 +124,17 @@ const PetsList = () => {
         )}
       </main>
 
-      <div className="fab-container">
-        <button
-          onClick={handleAddPet}
-          className="fab"
-          aria-label="Agregar mascota"
-        >
-          +
-        </button>
-      </div>
+      {isAuthenticated && (
+        <div className="fab-container">
+          <button
+            onClick={handleAddPet}
+            className="fab"
+            aria-label="Agregar mascota"
+          >
+            +
+          </button>
+        </div>
+      )}
     </div>
   );
 };

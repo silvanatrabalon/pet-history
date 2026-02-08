@@ -5,6 +5,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import googleAuthService from '../services/googleAuth';
+import { API_KEY } from '../utils/constants';
 
 const AuthContext = createContext();
 
@@ -31,7 +32,8 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      await googleAuthService.initialize();
+      // Inicializar con API key para modo observador
+      await googleAuthService.initialize(API_KEY);
       setIsInitialized(true);
       
       // Intentar restaurar sesión desde localStorage
