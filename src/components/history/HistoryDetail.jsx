@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useData } from '../../context/DataContext';
 import { formatDate, splitImageUrls } from '../../utils/helpers';
 import googleDriveService from '../../services/googleDrive';
 import './HistoryDetail.css';
 
 const HistoryDetail = ({ record, petId, onClose }) => {
   const navigate = useNavigate();
+  const { vets, loadVets } = useData();
   const imageUrls = splitImageUrls(record.imageUrls);
   const [showGallery, setShowGallery] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [currentImageBlob, setCurrentImageBlob] = useState(null);
+  const [showVetInfo, setShowVetInfo] = useState(false);
+
+  useEffect(() => {
+    loadVets();
+  }, [loadVets]);
 
   const extractFileId = (url) => {
     if (url.includes('googleusercontent.com/d/')) {
@@ -102,56 +109,89 @@ const HistoryDetail = ({ record, petId, onClose }) => {
           </div>
 
           <div className="history-detail-content">
-            <div className="detail-row">
-              <span className="detail-label">Fecha</span>
-              <span className="detail-value">{formatDate(record.fecha)}</span>
+            {/* Tabla de información principal */}
+            <div className="detail-table">
+              <div className="detail-table-row">
+                <div className="detail-table-cell header">Fecha</div>
+                <div className="detail-table-cell">{formatDate(record.fecha)}</div>
+              </div>
+
+              {record.peso && (
+                <div className="detail-table-row">
+                  <div className="detail-table-cell header">Peso</div>
+                  <div className="detail-table-cell">{record.peso} kg</div>
+                </div>
+              )}
+
+              {record.veterinaria && (
+                <div className="detail-table-row">
+                  <div className="detail-table-cell header">
+                    Vet
+                    <button 
+                      className="vet-info-toggle"
+                      onClick={() => setShowVetInfo(!showVetInfo)}
+                      type="button"
+                      title="Ver información"
+                    >
+                      ⓘ
+                    </button>
+                  </div>
+                  <div className="detail-table-cell">
+                    {record.veterinaria}
+                    {showVetInfo && (() => {
+                      const vetInfo = vets.find(v => v.nombre === record.veterinaria);
+                      return vetInfo && (vetInfo.especialidad || vetInfo.contacto) ? (
+                        <div className="vet-info-inline">
+                          {vetInfo.especialidad && (
+                            <span className="vet-info-item">
+                              <strong>Esp:</strong> {vetInfo.especialidad}
+                            </span>
+                          )}
+                          {vetInfo.contacto && (
+                            <span className="vet-info-item">
+                              <strong>Tel:</strong> {vetInfo.contacto}
+                            </span>
+                          )}
+                        </div>
+                      ) : null;
+                    })()}
+                  </div>
+                </div>
+              )}
             </div>
 
+            {/* Secciones de texto expandido */}
             {record.motivo && (
-              <div className="detail-row">
-                <span className="detail-label">Motivo de Consulta</span>
-                <span className="detail-value">{record.motivo}</span>
+              <div className="detail-text-section">
+                <div className="detail-text-header">Motivo de Consulta</div>
+                <div className="detail-text-content">{record.motivo}</div>
               </div>
             )}
 
             {record.detalle && (
-              <div className="detail-row detail-row-full">
-                <span className="detail-label">Detalle</span>
-                <p className="detail-value detail-text">{record.detalle}</p>
-              </div>
-            )}
-
-            {record.veterinaria && (
-              <div className="detail-row">
-                <span className="detail-label">Veterinaria</span>
-                <span className="detail-value">{record.veterinaria}</span>
-              </div>
-            )}
-
-            {record.peso && (
-              <div className="detail-row">
-                <span className="detail-label">Peso</span>
-                <span className="detail-value">{record.peso} kg</span>
+              <div className="detail-text-section">
+                <div className="detail-text-header">Detalle</div>
+                <div className="detail-text-content">{record.detalle}</div>
               </div>
             )}
 
             {record.medicacion && (
-              <div className="detail-row detail-row-full">
-                <span className="detail-label">Medicación</span>
-                <p className="detail-value detail-text">{record.medicacion}</p>
+              <div className="detail-text-section">
+                <div className="detail-text-header">Medicación</div>
+                <div className="detail-text-content">{record.medicacion}</div>
               </div>
             )}
 
+            {/* Imágenes */}
             {imageUrls.length > 0 && (
-              <div className="detail-images">
-                <button
-                  onClick={() => openGallery(0)}
-                  className="view-images-button"
-                  type="button"
-                >
-                  📷 Ver imágenes ({imageUrls.length})
-                </button>
-              </div>
+              <button
+                onClick={() => openGallery(0)}
+                className="view-images-btn"
+                type="button"
+              >
+                <span className="btn-icon">📷</span>
+                <span>Ver imágenes ({imageUrls.length})</span>
+              </button>
             )}
           </div>
 
