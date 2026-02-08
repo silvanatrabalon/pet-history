@@ -67,13 +67,13 @@ const PetsList = () => {
       </main>
 
       <div className="fab-container">
-        <Button
+        <button
           onClick={handleAddPet}
-          variant="primary"
           className="fab"
+          aria-label="Agregar mascota"
         >
-          + Agregar Mascota
-        </Button>
+          +
+        </button>
       </div>
     </div>
   );

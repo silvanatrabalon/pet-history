@@ -46,6 +46,14 @@
   text-align: center;
 }
 
+.pet-profile-fullname {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #6B7280;
+  text-align: center;
+}
+
 .pet-profile-info {
   display: flex;
   flex-direction: column;

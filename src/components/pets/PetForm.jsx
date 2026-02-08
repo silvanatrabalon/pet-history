@@ -8,9 +8,10 @@ import './PetForm.css';
 const PetForm = ({ onSubmit, onCancel, loading = false, initialData = null }) => {
   const [formData, setFormData] = useState({
     nombre: '',
+    nickname: '',
     especie: '',
     raza: '',
-    edad: '',
+    nacimiento: '',
     sexo: '',
     notas: '',
     photoFile: null
@@ -21,11 +22,16 @@ const PetForm = ({ onSubmit, onCancel, loading = false, initialData = null }) =>
   // Cargar datos iniciales si estamos en modo edición
   useEffect(() => {
     if (initialData) {
+      console.log('📝 Cargando datos iniciales en formulario:', initialData);
+      console.log('📝 Nickname:', initialData.nickname);
+      console.log('📝 Nacimiento:', initialData.nacimiento);
+      
       setFormData({
         nombre: initialData.nombre || '',
+        nickname: initialData.nickname || '', // Solo usar el valor real, sin fallback
         especie: initialData.especie || '',
         raza: initialData.raza || '',
-        edad: initialData.edad || '',
+        nacimiento: initialData.nacimiento || '',
         sexo: initialData.sexo || '',
         notas: initialData.notas || '',
         photoFile: null
@@ -128,6 +134,14 @@ const PetForm = ({ onSubmit, onCancel, loading = false, initialData = null }) =>
         required
       />
 
+      <Input
+        label="Apodo / Nickname"
+        name="nickname"
+        value={formData.nickname}
+        onChange={handleChange}
+        placeholder="Ej: Lunita"
+      />
+
       <div className="input-group">
         <label htmlFor="especie" className="input-label">
           Especie<span className="required">*</span>
@@ -158,13 +172,11 @@ const PetForm = ({ onSubmit, onCancel, loading = false, initialData = null }) =>
       />
 
       <Input
-        label="Edad (años)"
-        name="edad"
-        type="number"
-        step="0.1"
-        value={formData.edad}
+        label="Fecha de Nacimiento"
+        name="nacimiento"
+        type="date"
+        value={formData.nacimiento}
         onChange={handleChange}
-        placeholder="Ej: 3.5"
       />
 
       <div className="input-group">

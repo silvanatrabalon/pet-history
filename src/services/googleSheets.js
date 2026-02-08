@@ -13,7 +13,7 @@ class GoogleSheetsService {
     try {
       const response = await window.gapi.client.sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEETS.PETS}!A2:I`, // Agregamos columna I para photoUrl
+        range: `${SHEETS.PETS}!A2:J`, // A-J: petId, nombre, nickname, especie, raza, nacimiento, sexo, notas, createdAt, photoUrl
       });
 
       const rows = response.result.values || [];
@@ -22,13 +22,14 @@ class GoogleSheetsService {
       const pets = rows.map(row => ({
         petId: row[0] || '',
         nombre: row[1] || '',
-        especie: row[2] || '',
-        raza: row[3] || '',
-        edad: row[4] || '',
-        sexo: row[5] || '',
-        notas: row[6] || '',
-        createdAt: row[7] || '',
-        photoUrl: row[8] || '' // Nueva columna para foto de perfil
+        nickname: row[2] || '',
+        especie: row[3] || '',
+        raza: row[4] || '',
+        nacimiento: row[5] || '',
+        sexo: row[6] || '',
+        notas: row[7] || '',
+        createdAt: row[8] || '',
+        photoUrl: row[9] || '' // Foto de perfil
       }));
 
       console.log(`✅ ${pets.length} mascotas leídas`);
@@ -47,9 +48,10 @@ class GoogleSheetsService {
       const row = [
         petData.petId,
         petData.nombre,
+        petData.nickname || '',
         petData.especie,
-        petData.raza,
-        petData.edad,
+        petData.raza || '',
+        petData.nacimiento || '',
         petData.sexo,
         petData.notas || '',
         petData.createdAt || new Date().toISOString(),
@@ -58,7 +60,7 @@ class GoogleSheetsService {
 
       const response = await window.gapi.client.sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEETS.PETS}!A:I`,
+        range: `${SHEETS.PETS}!A:J`,
         valueInputOption: 'USER_ENTERED',
         resource: {
           values: [row]
@@ -165,9 +167,10 @@ class GoogleSheetsService {
       const row = [
         petData.petId,
         petData.nombre,
+        petData.nickname || '',
         petData.especie,
-        petData.raza,
-        petData.edad,
+        petData.raza || '',
+        petData.nacimiento || '',
         petData.sexo,
         petData.notas || '',
         petData.createdAt,
@@ -176,7 +179,7 @@ class GoogleSheetsService {
 
       const response = await window.gapi.client.sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEETS.PETS}!A${sheetRow}:I${sheetRow}`,
+        range: `${SHEETS.PETS}!A${sheetRow}:J${sheetRow}`,
         valueInputOption: 'USER_ENTERED',
         resource: {
           values: [row]

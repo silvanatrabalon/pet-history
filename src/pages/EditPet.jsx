@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import googleDriveService from '../services/googleDrive';
 import PetForm from '../components/pets/PetForm';
 import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -22,8 +23,10 @@ const EditPet = () => {
 
   const loadPetData = async () => {
     try {
-      await loadPets();
+      // Forzar recarga para obtener los datos más recientes del Sheet
+      await loadPets(true);
       const petData = getPetById(id);
+      console.log('🐾 Pet data cargado para edición:', petData);
       setPet(petData);
     } catch (err) {
       console.error('Error cargando mascota:', err);
@@ -37,12 +40,33 @@ const EditPet = () => {
       setLoading(true);
       setError(null);
       
-      // Mantener datos originales que no cambian
+      // Mantener datos originales y solo actualizar lo que viene del formulario
       const updatedData = {
-        ...formData,
+        petId: pet.petId,
+        nombre: formData.nombre || pet.nombre,
+        nickname: formData.nickname || '', // Guardar tal cual viene del form
+        especie: formData.especie || pet.especie,
+        raza: formData.raza || '',
+        nacimiento: formData.nacimiento || '', // Guardar tal cual viene del form
+        sexo: formData.sexo || pet.sexo,
+        notas: formData.notas || '',
         createdAt: pet.createdAt,
-        photoUrl: pet.photoUrl
+        photoUrl: formData.photoFile ? '' : pet.photoUrl // Se actualizará después si hay nueva foto
       };
+
+      // Si hay una nueva foto, subirla primero
+      if (formData.photoFile) {
+        try {
+          const result = await googleDriveService.uploadImage(
+            formData.photoFile,
+            `pet_${pet.petId}_${Date.now()}`
+          );
+          updatedData.photoUrl = result.url;
+        } catch (err) {
+          console.error('Error subiendo foto:', err);
+          // Continuar sin la foto
+        }
+      }
       
       await updatePet(id, updatedData);
       navigate(`/pets/${id}`);

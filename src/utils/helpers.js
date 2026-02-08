@@ -34,15 +34,47 @@ export const splitImageUrls = (urlString) => {
 };
 
 /**
- * Calcula la edad en formato legible
+ * Calcula la edad desde fecha de nacimiento
  */
-export const formatAge = (ageInYears) => {
-  if (!ageInYears) return 'Edad desconocida';
-  if (ageInYears < 1) {
-    const months = Math.round(ageInYears * 12);
-    return `${months} ${months === 1 ? 'mes' : 'meses'}`;
+export const calculateAge = (birthDate) => {
+  if (!birthDate) return null;
+  
+  const birth = new Date(birthDate);
+  const today = new Date();
+  
+  let years = today.getFullYear() - birth.getFullYear();
+  let months = today.getMonth() - birth.getMonth();
+  
+  // Ajustar si aún no cumplió años este año
+  if (months < 0 || (months === 0 && today.getDate() < birth.getDate())) {
+    years--;
+    months += 12;
   }
-  return `${ageInYears} ${ageInYears === 1 ? 'año' : 'años'}`;
+  
+  // Ajustar meses si aún no llegó al día del mes
+  if (today.getDate() < birth.getDate()) {
+    months--;
+  }
+  
+  return { years, months };
+};
+
+/**
+ * Formatea la edad en formato legible
+ */
+export const formatAge = (birthDate) => {
+  const age = calculateAge(birthDate);
+  if (!age) return 'Edad desconocida';
+  
+  if (age.years === 0) {
+    return `${age.months} ${age.months === 1 ? 'mes' : 'meses'}`;
+  }
+  
+  if (age.months === 0) {
+    return `${age.years} ${age.years === 1 ? 'año' : 'años'}`;
+  }
+  
+  return `${age.years} ${age.years === 1 ? 'año' : 'años'} y ${age.months} ${age.months === 1 ? 'mes' : 'meses'}`;
 };
 
 /**

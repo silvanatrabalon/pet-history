@@ -104,11 +104,12 @@ export const DataProvider = ({ children }) => {
       const newPet = {
         petId: generateId(),
         nombre: petData.nombre,
+        nickname: petData.nickname || '',
         especie: petData.especie,
-        raza: petData.raza,
-        edad: petData.edad,
+        raza: petData.raza || '',
+        nacimiento: petData.nacimiento || '',
         sexo: petData.sexo,
-        notas: petData.notas,
+        notas: petData.notas || '',
         createdAt: new Date().toISOString(),
         photoUrl: ''
       };
@@ -116,15 +117,18 @@ export const DataProvider = ({ children }) => {
       // Si hay foto, subirla primero a Drive
       if (petData.photoFile) {
         console.log('📤 Subiendo foto de perfil...');
-        const photoUrl = await googleDriveService.uploadImage(petData.photoFile);
-        newPet.photoUrl = photoUrl;
+        const result = await googleDriveService.uploadImage(
+          petData.photoFile,
+          `pet_${newPet.petId}_${Date.now()}`
+        );
+        newPet.photoUrl = result.url;
         console.log('✅ Foto de perfil subida');
       }
 
       await googleSheetsService.addPet(newPet);
       
-      // Actualizar estado local
-      setPets(prev => [...prev, newPet]);
+      // Forzar recarga desde el sheet para obtener datos frescos
+      await loadPets(true);
       
       console.log('✅ Mascota agregada exitosamente');
       return newPet;
@@ -189,11 +193,12 @@ export const DataProvider = ({ children }) => {
       const updatedPet = {
         petId: petId,
         nombre: petData.nombre,
+        nickname: petData.nickname || '',
         especie: petData.especie,
-        raza: petData.raza,
-        edad: petData.edad,
+        raza: petData.raza || '',
+        nacimiento: petData.nacimiento || '',
         sexo: petData.sexo,
-        notas: petData.notas,
+        notas: petData.notas || '',
         createdAt: petData.createdAt, // Mantener la fecha de creación original
         photoUrl: petData.photoUrl || ''
       };
@@ -201,15 +206,18 @@ export const DataProvider = ({ children }) => {
       // Si hay nueva foto, subirla primero a Drive
       if (petData.photoFile) {
         console.log('📤 Subiendo nueva foto de perfil...');
-        const photoUrl = await googleDriveService.uploadImage(petData.photoFile);
-        updatedPet.photoUrl = photoUrl;
+        const result = await googleDriveService.uploadImage(
+          petData.photoFile,
+          `pet_${petId}_${Date.now()}`
+        );
+        updatedPet.photoUrl = result.url;
         console.log('✅ Nueva foto de perfil subida');
       }
 
       await googleSheetsService.updatePet(petId, updatedPet);
       
-      // Actualizar estado local
-      setPets(prev => prev.map(pet => pet.petId === petId ? updatedPet : pet));
+      // Forzar recarga desde el sheet para obtener datos frescos
+      await loadPets(true);
       
       console.log('✅ Mascota actualizada exitosamente');
       return updatedPet;
