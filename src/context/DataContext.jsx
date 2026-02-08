@@ -52,7 +52,8 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [petsLoaded]); // Removido 'pets' de las dependencias
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [petsLoaded]); // Removido 'pets' de las dependencias para evitar recreación innecesaria
 
   /**
    * Carga todo el historial médico desde Google Sheets
@@ -78,7 +79,8 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [historyLoaded]); // Removido 'medicalHistory' de las dependencias
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [historyLoaded]); // Removido 'medicalHistory' de las dependencias para evitar recreación innecesaria
 
   /**
    * Obtiene el historial médico de una mascota específica
@@ -323,7 +325,8 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [vetsLoaded]); // Removido 'vets' de las dependencias
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vetsLoaded]); // Removido 'vets' de las dependencias para evitar recreación innecesaria
 
   /**
    * Agrega una nueva veterinaria

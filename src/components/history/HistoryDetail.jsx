@@ -8,7 +8,7 @@ import './HistoryDetail.css';
 
 const HistoryDetail = ({ record, petId, onClose }) => {
   const navigate = useNavigate();
-  const { vets, loadVets } = useData();
+  const { vets } = useData();
   const { isAuthenticated } = useAuth();
   const imageUrls = splitImageUrls(record.imageUrls);
   const [showGallery, setShowGallery] = useState(false);
