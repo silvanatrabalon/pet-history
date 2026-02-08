@@ -38,7 +38,7 @@ const AddHistory = () => {
       setLoading(true);
       setError(null);
       await addMedicalRecord(recordData, imageFiles);
-      navigate(`/pets/${petId}`);
+      navigate(`/pets/${petId}?tab=history`);
     } catch (err) {
       setError('Error al guardar el registro. Intenta nuevamente.');
       console.error(err);

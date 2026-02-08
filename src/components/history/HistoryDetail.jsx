@@ -107,10 +107,24 @@ const HistoryDetail = ({ record, petId, onClose }) => {
               <span className="detail-value">{formatDate(record.fecha)}</span>
             </div>
 
-            {record.diagnostico && (
+            {record.motivo && (
+              <div className="detail-row">
+                <span className="detail-label">Motivo de Consulta</span>
+                <span className="detail-value">{record.motivo}</span>
+              </div>
+            )}
+
+            {record.detalle && (
               <div className="detail-row detail-row-full">
-                <span className="detail-label">Diagnóstico</span>
-                <p className="detail-value detail-text">{record.diagnostico}</p>
+                <span className="detail-label">Detalle</span>
+                <p className="detail-value detail-text">{record.detalle}</p>
+              </div>
+            )}
+
+            {record.veterinaria && (
+              <div className="detail-row">
+                <span className="detail-label">Veterinaria</span>
+                <span className="detail-value">{record.veterinaria}</span>
               </div>
             )}
 

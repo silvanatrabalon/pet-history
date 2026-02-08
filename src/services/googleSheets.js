@@ -82,7 +82,7 @@ class GoogleSheetsService {
     try {
       const response = await window.gapi.client.sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEETS.MEDICAL_HISTORY}!A2:H`,
+        range: `${SHEETS.MEDICAL_HISTORY}!A2:J`,
       });
 
       const rows = response.result.values || [];
@@ -92,11 +92,13 @@ class GoogleSheetsService {
         historyId: row[0] || '',
         petId: row[1] || '',
         fecha: row[2] || '',
-        diagnostico: row[3] || '',
-        peso: row[4] || '',
-        medicacion: row[5] || '',
-        imageUrls: row[6] || '',
-        createdAt: row[7] || ''
+        motivo: row[3] || '',
+        detalle: row[4] || '',
+        veterinaria: row[5] || '',
+        peso: row[6] || '',
+        medicacion: row[7] || '',
+        imageUrls: row[8] || '',
+        createdAt: row[9] || ''
       }));
 
       console.log(`✅ ${history.length} registros médicos leídos`);
@@ -116,6 +118,34 @@ class GoogleSheetsService {
   }
 
   /**
+   * Lee todas las veterinarias desde la hoja "Vets"
+   */
+  async getVets() {
+    try {
+      const response = await window.gapi.client.sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${SHEETS.VETS}!A2:C`,
+      });
+
+      const rows = response.result.values || [];
+      
+      // Mapear rows a objetos Vet
+      const vets = rows.map(row => ({
+        nombre: row[0] || '',
+        especialidad: row[1] || '',
+        contacto: row[2] || ''
+      }));
+
+      console.log(`✅ ${vets.length} veterinarias leídas`);
+      return vets;
+    } catch (error) {
+      console.error('❌ Error leyendo veterinarias:', error);
+      // Retornar array vacío si no existe la hoja
+      return [];
+    }
+  }
+
+  /**
    * Agrega un nuevo registro al historial médico
    */
   async addMedicalRecord(recordData) {
@@ -124,7 +154,9 @@ class GoogleSheetsService {
         recordData.historyId,
         recordData.petId,
         recordData.fecha,
-        recordData.diagnostico,
+        recordData.motivo,
+        recordData.detalle || '',
+        recordData.veterinaria || '',
         recordData.peso || '',
         recordData.medicacion || '',
         recordData.imageUrls || '',
@@ -133,7 +165,7 @@ class GoogleSheetsService {
 
       const response = await window.gapi.client.sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEETS.MEDICAL_HISTORY}!A:H`,
+        range: `${SHEETS.MEDICAL_HISTORY}!A:J`,
         valueInputOption: 'USER_ENTERED',
         resource: {
           values: [row]
@@ -214,7 +246,9 @@ class GoogleSheetsService {
         recordData.historyId,
         recordData.petId,
         recordData.fecha,
-        recordData.diagnostico || '',
+        recordData.motivo || '',
+        recordData.detalle || '',
+        recordData.veterinaria || '',
         recordData.peso || '',
         recordData.medicacion || '',
         recordData.imageUrls || '',
@@ -223,7 +257,7 @@ class GoogleSheetsService {
 
       const response = await window.gapi.client.sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEETS.MEDICAL_HISTORY}!A${sheetRow}:H${sheetRow}`,
+        range: `${SHEETS.MEDICAL_HISTORY}!A${sheetRow}:J${sheetRow}`,
         valueInputOption: 'USER_ENTERED',
         resource: {
           values: [row]
@@ -248,7 +282,7 @@ class GoogleSheetsService {
       const petsHeaders = [['petId', 'nombre', 'especie', 'raza', 'edad', 'sexo', 'notas', 'createdAt']];
       
       // Headers para la hoja MedicalHistory
-      const historyHeaders = [['historyId', 'petId', 'fecha', 'diagnostico', 'peso', 'medicacion', 'imageUrls', 'createdAt']];
+      const historyHeaders = [['historyId', 'petId', 'fecha', 'motivo', 'detalle', 'veterinaria', 'peso', 'medicacion', 'imageUrls', 'createdAt']];
 
       // Crear o actualizar headers
       await window.gapi.client.sheets.spreadsheets.values.update({

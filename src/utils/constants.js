@@ -5,7 +5,8 @@ export const DRIVE_FOLDER_ID = process.env.REACT_APP_DRIVE_FOLDER_ID;
 // Google Sheets ranges
 export const SHEETS = {
   PETS: 'Pets',
-  MEDICAL_HISTORY: 'MedicalHistory'
+  MEDICAL_HISTORY: 'MedicalHistory',
+  VETS: 'Vets'
 };
 
 // Google API Scopes

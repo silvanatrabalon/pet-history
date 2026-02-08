@@ -4,6 +4,41 @@
   width: 100%;
 }
 
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.form-select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background-color: white;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #e91e63;
+  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+}
+
+.form-select option {
+  padding: 8px;
+}
+
 .form-actions {
   display: flex;
   flex-direction: column;

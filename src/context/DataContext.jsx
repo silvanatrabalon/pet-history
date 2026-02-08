@@ -21,10 +21,12 @@ export const useData = () => {
 export const DataProvider = ({ children }) => {
   const [pets, setPets] = useState([]);
   const [medicalHistory, setMedicalHistory] = useState([]);
+  const [vets, setVets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [petsLoaded, setPetsLoaded] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [vetsLoaded, setVetsLoaded] = useState(false);
 
   /**
    * Carga todas las mascotas desde Google Sheets
@@ -160,8 +162,14 @@ export const DataProvider = ({ children }) => {
       }
 
       const newRecord = {
-        ...recordData,
         historyId: generateId(),
+        petId: recordData.petId,
+        fecha: recordData.fecha,
+        motivo: recordData.motivo,
+        detalle: recordData.detalle || '',
+        veterinaria: recordData.veterinaria || '',
+        peso: recordData.peso || '',
+        medicacion: recordData.medicacion || '',
         imageUrls,
         createdAt: new Date().toISOString()
       };
@@ -256,9 +264,11 @@ export const DataProvider = ({ children }) => {
         historyId: historyId,
         petId: recordData.petId,
         fecha: recordData.fecha,
-        diagnostico: recordData.diagnostico,
-        peso: recordData.peso,
-        medicacion: recordData.medicacion,
+        motivo: recordData.motivo,
+        detalle: recordData.detalle || '',
+        veterinaria: recordData.veterinaria || '',
+        peso: recordData.peso || '',
+        medicacion: recordData.medicacion || '',
         imageUrls: imageUrls,
         createdAt: recordData.createdAt // Mantener la fecha de creación original
       };
@@ -285,16 +295,45 @@ export const DataProvider = ({ children }) => {
    * Recarga todos los datos (forzando la actualización)
    */
   const refreshData = async () => {
-    await Promise.all([loadPets(true), loadMedicalHistory(true)]);
+    await Promise.all([loadPets(true), loadMedicalHistory(true), loadVets(true)]);
   };
+
+  /**
+   * Carga todas las veterinarias desde Google Sheets
+   */
+  const loadVets = useCallback(async (force = false) => {
+    // Si ya están cargadas y no es forzado, no recargar
+    if (vetsLoaded && !force) {
+      console.log('ℹ️ Veterinarias ya cargadas, usando caché');
+      return vets;
+    }
+    
+    try {
+      setLoading(true);
+      setError(null);
+      const vetsData = await googleSheetsService.getVets();
+      setVets(vetsData);
+      setVetsLoaded(true);
+      return vetsData;
+    } catch (err) {
+      console.error('❌ Error cargando veterinarias:', err);
+      setError('No se pudieron cargar las veterinarias');
+      // No lanzar error, solo retornar array vacío
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, [vetsLoaded, vets]);
 
   const value = {
     pets,
     medicalHistory,
+    vets,
     loading,
     error,
     loadPets,
     loadMedicalHistory,
+    loadVets,
     getPetHistory,
     getPetById,
     addPet,

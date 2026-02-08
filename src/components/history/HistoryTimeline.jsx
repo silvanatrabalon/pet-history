@@ -44,7 +44,7 @@ const HistoryTimeline = ({ history, petId }) => {
             <div className="timeline-content">
               <div className="timeline-date">{formatDate(record.fecha)}</div>
               <div className="timeline-diagnosis">
-                {record.diagnostico || 'Sin diagnóstico registrado'}
+                {record.motivo || 'Sin motivo registrado'}
               </div>
               <div className="timeline-arrow">›</div>
             </div>

@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { useData } from '../../context/DataContext';
 import Input from '../common/Input';
 import Button from '../common/Button';
 import ImageUploader from './ImageUploader';
 import './HistoryForm.css';
 
 const HistoryForm = ({ petId, onSubmit, onCancel, loading = false, initialData = null }) => {
+  const { vets, loadVets } = useData();
   const [formData, setFormData] = useState({
     petId: petId,
     fecha: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
-    diagnostico: '',
+    motivo: '',
+    detalle: '',
+    veterinaria: '',
     peso: '',
     medicacion: ''
   });
 
   const [imageFiles, setImageFiles] = useState([]);
+
+  // Cargar veterinarias
+  useEffect(() => {
+    loadVets();
+  }, [loadVets]);
 
   // Cargar datos iniciales si estamos en modo edición
   useEffect(() => {
@@ -21,7 +30,9 @@ const HistoryForm = ({ petId, onSubmit, onCancel, loading = false, initialData =
       setFormData({
         petId: initialData.petId,
         fecha: initialData.fecha || new Date().toISOString().split('T')[0],
-        diagnostico: initialData.diagnostico || '',
+        motivo: initialData.motivo || '',
+        detalle: initialData.detalle || '',
+        veterinaria: initialData.veterinaria || '',
         peso: initialData.peso || '',
         medicacion: initialData.medicacion || ''
       });
@@ -57,14 +68,41 @@ const HistoryForm = ({ petId, onSubmit, onCancel, loading = false, initialData =
       />
 
       <Input
-        label="Diagnóstico"
-        name="diagnostico"
-        type="textarea"
-        value={formData.diagnostico}
+        label="Motivo de Consulta"
+        name="motivo"
+        type="text"
+        value={formData.motivo}
         onChange={handleChange}
-        placeholder="Descripción de la consulta, síntomas, diagnóstico..."
+        placeholder="Ej: Control anual, Vacunación, Consulta por vómitos..."
         required
       />
+
+      <Input
+        label="Detalle"
+        name="detalle"
+        type="textarea"
+        value={formData.detalle}
+        onChange={handleChange}
+        placeholder="Descripción detallada de la consulta, síntomas, diagnóstico, tratamiento..."
+      />
+
+      <div className="form-group">
+        <label htmlFor="veterinaria" className="form-label">Veterinaria</label>
+        <select
+          id="veterinaria"
+          name="veterinaria"
+          value={formData.veterinaria}
+          onChange={handleChange}
+          className="form-select"
+        >
+          <option value="">Seleccionar veterinaria...</option>
+          {vets.map((vet, index) => (
+            <option key={index} value={vet.nombre}>
+              {vet.nombre}{vet.especialidad ? ` - ${vet.especialidad}` : ''}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <Input
         label="Peso (kg)"
