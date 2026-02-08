@@ -325,6 +325,78 @@ export const DataProvider = ({ children }) => {
     }
   }, [vetsLoaded, vets]);
 
+  /**
+   * Agrega una nueva veterinaria
+   */
+  const addVet = async (vetData) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      await googleSheetsService.addVet(vetData);
+      
+      // Forzar recarga desde el sheet para obtener datos frescos
+      await loadVets(true);
+      
+      console.log('✅ Veterinaria agregada exitosamente');
+      return vetData;
+    } catch (err) {
+      console.error('❌ Error agregando veterinaria:', err);
+      setError('No se pudo guardar la veterinaria');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Actualiza una veterinaria existente
+   */
+  const updateVet = async (rowIndex, vetData) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      await googleSheetsService.updateVet(rowIndex, vetData);
+      
+      // Forzar recarga desde el sheet para obtener datos frescos
+      await loadVets(true);
+      
+      console.log('✅ Veterinaria actualizada exitosamente');
+      return vetData;
+    } catch (err) {
+      console.error('❌ Error actualizando veterinaria:', err);
+      setError('No se pudo actualizar la veterinaria');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Elimina una veterinaria
+   */
+  const deleteVet = async (rowIndex) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      await googleSheetsService.deleteVet(rowIndex);
+      
+      // Forzar recarga desde el sheet para obtener datos frescos
+      await loadVets(true);
+      
+      console.log('✅ Veterinaria eliminada exitosamente');
+      return true;
+    } catch (err) {
+      console.error('❌ Error eliminando veterinaria:', err);
+      setError('No se pudo eliminar la veterinaria');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     pets,
     medicalHistory,
@@ -340,6 +412,9 @@ export const DataProvider = ({ children }) => {
     updatePet,
     addMedicalRecord,
     updateMedicalRecord,
+    addVet,
+    updateVet,
+    deleteVet,
     refreshData
   };
 

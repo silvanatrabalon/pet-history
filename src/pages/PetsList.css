@@ -44,6 +44,118 @@
   white-space: nowrap;
 }
 
+/* Menú hamburguesa */
+.header-menu {
+  position: relative;
+}
+
+.hamburger-btn {
+  width: 40px;
+  height: 40px;
+  background: #F3F4F6;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.hamburger-btn:hover {
+  background: #E5E7EB;
+}
+
+.hamburger-btn:active {
+  transform: scale(0.96);
+}
+
+.hamburger-line {
+  width: 20px;
+  height: 2px;
+  background: #374151;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+  background: transparent;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  min-width: 200px;
+  z-index: 100;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-item {
+  width: 100%;
+  padding: 14px 16px;
+  background: white;
+  border: none;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menu-item:hover {
+  background: #F9FAFB;
+}
+
+.menu-item:active {
+  background: #F3F4F6;
+}
+
+.menu-item.logout {
+  color: #DC2626;
+  border-top: 1px solid #F3F4F6;
+}
+
+.menu-item.logout:hover {
+  background: #FEF2F2;
+}
+
+.menu-icon {
+  font-size: 18px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .logout-btn {
   padding: 8px 16px;
   background: #F3F4F6;

@@ -129,19 +129,123 @@ class GoogleSheetsService {
 
       const rows = response.result.values || [];
       
-      // Mapear rows a objetos Vet
-      const vets = rows.map(row => ({
+      // Mapear rows a objetos Vet con índice para poder identificarlos
+      const vets = rows.map((row, index) => ({
+        rowIndex: index + 2, // La fila real en la sheet (empezando desde 2)
         nombre: row[0] || '',
         especialidad: row[1] || '',
         contacto: row[2] || ''
       }));
 
-      console.log(`✅ ${vets.length} veterinarias leídas`);
+      console.log(`✅ ${vets.length} veterinarias leídas, muestra:`, vets.slice(0, 2));
       return vets;
     } catch (error) {
       console.error('❌ Error leyendo veterinarias:', error);
       // Retornar array vacío si no existe la hoja
       return [];
+    }
+  }
+
+  /**
+   * Agrega una nueva veterinaria
+   */
+  async addVet(vetData) {
+    try {
+      const row = [
+        vetData.nombre,
+        vetData.especialidad || '',
+        vetData.contacto || ''
+      ];
+
+      const response = await window.gapi.client.sheets.spreadsheets.values.append({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${SHEETS.VETS}!A:C`,
+        valueInputOption: 'USER_ENTERED',
+        resource: {
+          values: [row]
+        }
+      });
+
+      console.log('✅ Veterinaria agregada');
+      return response.result;
+    } catch (error) {
+      console.error('❌ Error agregando veterinaria:', error);
+      if (error.status === 401) {
+        throw new Error('Sesión expirada. Por favor, recarga la página y vuelve a iniciar sesión.');
+      }
+      throw new Error('No se pudo agregar la veterinaria');
+    }
+  }
+
+  /**
+   * Actualiza una veterinaria existente
+   */
+  async updateVet(rowIndex, vetData) {
+    try {
+      console.log('🔍 updateVet recibió - rowIndex:', rowIndex, 'tipo:', typeof rowIndex, 'vetData:', vetData);
+      
+      if (!rowIndex || isNaN(rowIndex) || rowIndex < 2) {
+        console.error('❌ Validación falló - rowIndex:', rowIndex);
+        throw new Error('Índice de fila inválido');
+      }
+
+      console.log('🔄 Actualizando veterinaria en fila:', rowIndex, vetData);
+
+      const row = [
+        vetData.nombre,
+        vetData.especialidad || '',
+        vetData.contacto || ''
+      ];
+
+      const response = await window.gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${SHEETS.VETS}!A${rowIndex}:C${rowIndex}`,
+        valueInputOption: 'USER_ENTERED',
+        resource: {
+          values: [row]
+        }
+      });
+
+      console.log('✅ Veterinaria actualizada');
+      return response.result;
+    } catch (error) {
+      console.error('❌ Error actualizando veterinaria:', error);
+      if (error.status === 401) {
+        throw new Error('Sesión expirada. Por favor, recarga la página y vuelve a iniciar sesión.');
+      }
+      throw new Error('No se pudo actualizar la veterinaria');
+    }
+  }
+
+  /**
+   * Elimina una veterinaria
+   */
+  async deleteVet(rowIndex) {
+    try {
+      if (!rowIndex || rowIndex < 2) {
+        throw new Error('Índice de fila inválido');
+      }
+
+      // Para eliminar, establecemos valores vacíos
+      const row = ['', '', ''];
+
+      await window.gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${SHEETS.VETS}!A${rowIndex}:C${rowIndex}`,
+        valueInputOption: 'USER_ENTERED',
+        resource: {
+          values: [row]
+        }
+      });
+
+      console.log('✅ Veterinaria eliminada');
+      return true;
+    } catch (error) {
+      console.error('❌ Error eliminando veterinaria:', error);
+      if (error.status === 401) {
+        throw new Error('Sesión expirada. Por favor, recarga la página y vuelve a iniciar sesión.');
+      }
+      throw new Error('No se pudo eliminar la veterinaria');
     }
   }
 

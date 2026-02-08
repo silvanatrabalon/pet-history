@@ -9,6 +9,7 @@ import EditPet from './pages/EditPet';
 import PetDetail from './pages/PetDetail';
 import AddHistory from './pages/AddHistory';
 import EditHistory from './pages/EditHistory';
+import VetsList from './pages/VetsList';
 import './App.css';
 
 // Componente para rutas protegidas
@@ -85,6 +86,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <EditHistory />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/vets"
+        element={
+          <ProtectedRoute>
+            <VetsList />
           </ProtectedRoute>
         }
       />
