@@ -21,8 +21,11 @@ const VetsList = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
 
   useEffect(() => {
-    loadVets();
-  }, [loadVets]);
+    if (vets.length === 0) {
+      loadVets();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleBack = () => {
     navigate('/pets');

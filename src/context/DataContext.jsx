@@ -52,7 +52,7 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [petsLoaded, pets]);
+  }, [petsLoaded]); // Removido 'pets' de las dependencias
 
   /**
    * Carga todo el historial médico desde Google Sheets
@@ -78,7 +78,7 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [historyLoaded, medicalHistory]);
+  }, [historyLoaded]); // Removido 'medicalHistory' de las dependencias
 
   /**
    * Obtiene el historial médico de una mascota específica
@@ -323,7 +323,7 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [vetsLoaded, vets]);
+  }, [vetsLoaded]); // Removido 'vets' de las dependencias
 
   /**
    * Agrega una nueva veterinaria

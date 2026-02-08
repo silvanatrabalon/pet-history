@@ -18,14 +18,6 @@ const HistoryDetail = ({ record, petId, onClose }) => {
   const [currentImageBlob, setCurrentImageBlob] = useState(null);
   const [showVetInfo, setShowVetInfo] = useState(false);
 
-  useEffect(() => {
-    // Solo cargar vets si no están ya cargados
-    if (vets.length === 0) {
-      loadVets();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const extractFileId = (url) => {
     if (url.includes('googleusercontent.com/d/')) {
       return url.split('/d/')[1].split('?')[0];

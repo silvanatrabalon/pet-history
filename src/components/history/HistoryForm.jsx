@@ -19,10 +19,13 @@ const HistoryForm = ({ petId, onSubmit, onCancel, loading = false, initialData =
 
   const [imageFiles, setImageFiles] = useState([]);
 
-  // Cargar veterinarias
+  // Cargar veterinarias solo si no están cargadas
   useEffect(() => {
-    loadVets();
-  }, [loadVets]);
+    if (vets.length === 0) {
+      loadVets();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Cargar datos iniciales si estamos en modo edición
   useEffect(() => {

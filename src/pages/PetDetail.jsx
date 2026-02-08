@@ -13,7 +13,7 @@ const PetDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { getPetById, getPetHistory, loadPets, loadMedicalHistory, loading, pets, medicalHistory } = useData();
+  const { getPetById, getPetHistory, loadPets, loadMedicalHistory, loadVets, loading, pets, medicalHistory } = useData();
   const { isAuthenticated } = useAuth();
   
   const [pet, setPet] = useState(null);
@@ -26,6 +26,14 @@ const PetDetail = () => {
     loadData();
     // eslint-disable-next-line
   }, [id]);
+  
+  // Pre-cargar vets si estamos en la tab de historial
+  useEffect(() => {
+    if (activeTab === 'history') {
+      loadVets();
+    }
+    // eslint-disable-next-line
+  }, [activeTab]);
 
   // Efecto para actualizar cuando cambien los datos en el contexto
   useEffect(() => {
@@ -76,6 +84,11 @@ const PetDetail = () => {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setSearchParams({ tab });
+    
+    // Pre-cargar veterinarias cuando se abre la tab de historial
+    if (tab === 'history') {
+      loadVets();
+    }
   };
 
   if (dataLoading || loading) {
