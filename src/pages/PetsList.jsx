@@ -64,7 +64,7 @@ const PetsList = () => {
       <header className="page-header">
         <div className="header-content">
           <div className="header-left">
-            <h1 className="page-title">Mis Mascotas</h1>
+            <h1 className="page-title">Historial Clínico</h1>
             {user ? (
               <p className="user-email">{user.email}</p>
             ) : (
