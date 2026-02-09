@@ -7,7 +7,8 @@ export const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 export const SHEETS = {
   PETS: 'Pets',
   MEDICAL_HISTORY: 'MedicalHistory',
-  VETS: 'Vets'
+  VETS: 'Vets',
+  REMINDERS: 'Reminders'
 };
 
 // Google API Scopes

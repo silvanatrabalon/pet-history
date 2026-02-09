@@ -22,11 +22,13 @@ export const DataProvider = ({ children }) => {
   const [pets, setPets] = useState([]);
   const [medicalHistory, setMedicalHistory] = useState([]);
   const [vets, setVets] = useState([]);
+  const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [petsLoaded, setPetsLoaded] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const [vetsLoaded, setVetsLoaded] = useState(false);
+  const [remindersLoaded, setRemindersLoaded] = useState(false);
 
   /**
    * Carga todas las mascotas desde Google Sheets
@@ -400,15 +402,112 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  /**
+   * Carga todos los reminders desde Google Sheets
+   */
+  const loadReminders = useCallback(async (force = false) => {
+    if (remindersLoaded && !force) {
+      console.log('ℹ️ Reminders ya cargados, usando caché');
+      return reminders;
+    }
+    
+    try {
+      setLoading(true);
+      setError(null);
+      const remindersData = await googleSheetsService.getReminders();
+      setReminders(remindersData);
+      setRemindersLoaded(true);
+      return remindersData;
+    } catch (err) {
+      console.error('❌ Error cargando reminders:', err);
+      setError('No se pudieron cargar los reminders');
+      return [];
+    } finally {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [remindersLoaded]);
+
+  /**
+   * Agrega un nuevo reminder
+   */
+  const addReminder = async (reminderData) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const newReminder = await googleSheetsService.addReminder(reminderData);
+      
+      await loadReminders(true);
+      
+      console.log('✅ Reminder agregado exitosamente');
+      return newReminder;
+    } catch (err) {
+      console.error('❌ Error agregando reminder:', err);
+      setError('No se pudo agregar el reminder');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Actualiza un reminder existente
+   */
+  const updateReminder = async (rowIndex, reminderData) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      await googleSheetsService.updateReminder(rowIndex, reminderData);
+      
+      await loadReminders(true);
+      
+      console.log('✅ Reminder actualizado exitosamente');
+      return true;
+    } catch (err) {
+      console.error('❌ Error actualizando reminder:', err);
+      setError('No se pudo actualizar el reminder');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Elimina un reminder
+   */
+  const deleteReminder = async (rowIndex) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      await googleSheetsService.deleteReminder(rowIndex);
+      
+      await loadReminders(true);
+      
+      console.log('✅ Reminder eliminado exitosamente');
+      return true;
+    } catch (err) {
+      console.error('❌ Error eliminando reminder:', err);
+      setError('No se pudo eliminar el reminder');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     pets,
     medicalHistory,
     vets,
+    reminders,
     loading,
     error,
     loadPets,
     loadMedicalHistory,
     loadVets,
+    loadReminders,
     getPetHistory,
     getPetById,
     addPet,
@@ -418,6 +517,9 @@ export const DataProvider = ({ children }) => {
     addVet,
     updateVet,
     deleteVet,
+    addReminder,
+    updateReminder,
+    deleteReminder,
     refreshData
   };
 

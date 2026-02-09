@@ -9,6 +9,7 @@ import PetDetail from './pages/PetDetail';
 import AddHistory from './pages/AddHistory';
 import EditHistory from './pages/EditHistory';
 import VetsList from './pages/VetsList';
+import SanitaryPlan from './pages/SanitaryPlan';
 import './App.css';
 
 // Componente para rutas protegidas (modo edición)
@@ -83,6 +84,7 @@ const AppRoutes = () => {
         }
       />
       <Route path="/vets" element={<VetsList />} />
+      <Route path="/sanitary-plan" element={<SanitaryPlan />} />
       <Route path="/" element={<Navigate to="/pets" replace />} />
       <Route path="*" element={<Navigate to="/pets" replace />} />
     </Routes>

@@ -41,6 +41,11 @@ const PetsList = () => {
     navigate('/vets');
   };
 
+  const handleSanitaryPlan = () => {
+    setMenuOpen(false);
+    navigate('/sanitary-plan');
+  };
+
   const handleLogin = async () => {
     setMenuOpen(false);
     try {
@@ -84,6 +89,10 @@ const PetsList = () => {
                   <button onClick={handleVets} className="menu-item">
                     <span className="menu-icon">🏥</span>
                     <span>Veterinarias</span>
+                  </button>
+                  <button onClick={handleSanitaryPlan} className="menu-item">
+                    <span className="menu-icon">📅</span>
+                    <span>Plan Sanitario</span>
                   </button>
                   {isAuthenticated ? (
                     <button onClick={handleLogout} className="menu-item logout">

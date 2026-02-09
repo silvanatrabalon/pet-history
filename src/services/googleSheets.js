@@ -461,6 +461,136 @@ class GoogleSheetsService {
       throw error;
     }
   }
+
+  /**
+   * Lee todos los reminders desde la hoja "Reminders"
+   */
+  async getReminders() {
+    try {
+      const hasAuth = window.gapi.client.getToken();
+      let rows = [];
+      
+      if (hasAuth) {
+        const response = await window.gapi.client.sheets.spreadsheets.values.get({
+          spreadsheetId: SPREADSHEET_ID,
+          range: `${SHEETS.REMINDERS}!A2:F`,
+        });
+        rows = response.result.values || [];
+      } else {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEETS.REMINDERS}!A2:F?key=${API_KEY}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const data = await response.json();
+        rows = data.values || [];
+      }
+      
+      const reminders = rows.map((row, index) => ({
+        rowIndex: index + 2,
+        reminderId: row[0] || `REM${Date.now()}-${index}`,
+        petId: row[1] || '',
+        tipo: row[2] || '',
+        detalle: row[3] || '',
+        fecha: row[4] || '',
+        completado: row[5] === 'TRUE' || row[5] === true
+      }));
+
+      console.log(`✅ ${reminders.length} reminders leídos`);
+      return reminders;
+    } catch (error) {
+      console.error('❌ Error leyendo reminders:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Agrega un nuevo reminder
+   */
+  async addReminder(reminderData) {
+    try {
+      const reminderId = `REM${Date.now()}`;
+      const row = [
+        reminderId,
+        reminderData.petId,
+        reminderData.tipo,
+        reminderData.detalle || '',
+        reminderData.fecha,
+        false
+      ];
+
+      const response = await window.gapi.client.sheets.spreadsheets.values.append({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${SHEETS.REMINDERS}!A:F`,
+        valueInputOption: 'USER_ENTERED',
+        resource: {
+          values: [row]
+        }
+      });
+
+      console.log('✅ Reminder agregado:', response.result);
+      return { reminderId, ...reminderData, completado: false };
+    } catch (error) {
+      console.error('❌ Error agregando reminder:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Actualiza un reminder existente
+   */
+  async updateReminder(rowIndex, reminderData) {
+    try {
+      const row = [
+        reminderData.reminderId,
+        reminderData.petId,
+        reminderData.tipo,
+        reminderData.detalle || '',
+        reminderData.fecha,
+        reminderData.completado
+      ];
+
+      const response = await window.gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${SHEETS.REMINDERS}!A${rowIndex}:F${rowIndex}`,
+        valueInputOption: 'USER_ENTERED',
+        resource: {
+          values: [row]
+        }
+      });
+
+      console.log('✅ Reminder actualizado:', response.result);
+      return reminderData;
+    } catch (error) {
+      console.error('❌ Error actualizando reminder:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Elimina un reminder
+   */
+  async deleteReminder(rowIndex) {
+    try {
+      // Limpiar la fila (llenarla con valores vacíos)
+      const emptyRow = [['', '', '', '', '', '']];
+      
+      const response = await window.gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${SHEETS.REMINDERS}!A${rowIndex}:F${rowIndex}`,
+        valueInputOption: 'RAW',
+        resource: {
+          values: emptyRow
+        }
+      });
+
+      console.log('✅ Reminder eliminado:', response.result);
+      return true;
+    } catch (error) {
+      console.error('❌ Error eliminando reminder:', error);
+      throw error;
+    }
+  }
 }
 
 // Exportar instancia única
