@@ -1,0 +1,22 @@
+<svg width="180" height="180" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo rosa -->
+  <rect width="180" height="180" fill="#E91E63" rx="40"/>
+  
+  <!-- Paw print icon -->
+  <g transform="translate(90, 90)">
+    <!-- Main pad -->
+    <ellipse cx="0" cy="15" rx="20" ry="25" fill="white"/>
+    
+    <!-- Top left toe -->
+    <ellipse cx="-25" cy="-15" rx="12" ry="18" fill="white" transform="rotate(-20 -25 -15)"/>
+    
+    <!-- Top middle toe -->
+    <ellipse cx="0" cy="-25" rx="12" ry="18" fill="white"/>
+    
+    <!-- Top right toe -->
+    <ellipse cx="25" cy="-15" rx="12" ry="18" fill="white" transform="rotate(20 25 -15)"/>
+    
+    <!-- Small fourth toe -->
+    <ellipse cx="35" cy="5" rx="10" ry="15" fill="white" transform="rotate(25 35 5)"/>
+  </g>
+</svg>
