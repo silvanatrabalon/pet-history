@@ -15,6 +15,7 @@ class GoogleAuthService {
     this.gapiInited = false;
     this.gisInited = false;
     this.expiresAt = null;
+    this.refreshTimer = null;
   }
 
   /**
@@ -179,6 +180,9 @@ class GoogleAuthService {
    * Cierra sesión
    */
   logout() {
+    // Limpiar timer de renovación
+    this.clearRefreshTimer();
+    
     if (this.accessToken) {
       window.google.accounts.oauth2.revoke(this.accessToken, () => {
         console.log('✅ Sesión cerrada');
@@ -202,6 +206,9 @@ class GoogleAuthService {
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionData));
     console.log('✅ Sesión guardada en localStorage');
+    
+    // Programar renovación automática 5 minutos antes de expirar
+    this.scheduleTokenRefresh();
   }
 
   /**
@@ -218,15 +225,29 @@ class GoogleAuthService {
       
       // Verificar si el token expiró
       if (sessionData.expiresAt && Date.now() >= sessionData.expiresAt) {
-        console.log('⚠️ Token expirado, limpiando sesión');
-        localStorage.removeItem(STORAGE_KEY);
-        return null;
+        console.log('⚠️ Token expirado, intentando renovar...');
+        // Intentar renovar el token automáticamente
+        try {
+          await this.login();
+          console.log('✅ Token renovado exitosamente');
+          return {
+            accessToken: this.accessToken,
+            user: sessionData.user
+          };
+        } catch (error) {
+          console.log('❌ No se pudo renovar el token, limpiando sesión');
+          localStorage.removeItem(STORAGE_KEY);
+          return null;
+        }
       }
 
       // Restaurar token
       this.accessToken = sessionData.accessToken;
       this.expiresAt = sessionData.expiresAt;
       window.gapi.client.setToken({ access_token: this.accessToken });
+
+      // Programar renovación automática
+      this.scheduleTokenRefresh();
 
       console.log('✅ Sesión restaurada desde localStorage');
       return {
@@ -252,6 +273,47 @@ class GoogleAuthService {
    */
   getAccessToken() {
     return this.accessToken;
+  }
+
+  /**
+   * Programa la renovación automática del token
+   * Se ejecuta 5 minutos antes de que expire
+   */
+  scheduleTokenRefresh() {
+    // Limpiar timer anterior si existe
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+      this.refreshTimer = null;
+    }
+
+    if (!this.expiresAt) return;
+
+    // Calcular tiempo hasta 5 minutos antes de la expiración
+    const now = Date.now();
+    const timeUntilExpiry = this.expiresAt - now;
+    const fiveMinutes = 5 * 60 * 1000;
+    const refreshTime = timeUntilExpiry - fiveMinutes;
+
+    // Solo programar si falta más de 5 minutos para expirar
+    if (refreshTime > 0) {
+      console.log(`🔄 Token se renovará automáticamente en ${Math.round(refreshTime / 60000)} minutos`);
+      this.refreshTimer = setTimeout(() => {
+        console.log('🔄 Renovando token automáticamente...');
+        this.login().catch(error => {
+          console.error('❌ Error renovando token automáticamente:', error);
+        });
+      }, refreshTime);
+    }
+  }
+
+  /**
+   * Limpia el timer de renovación
+   */
+  clearRefreshTimer() {
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+      this.refreshTimer = null;
+    }
   }
 }
 
