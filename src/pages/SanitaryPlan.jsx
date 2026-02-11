@@ -53,11 +53,6 @@ const SanitaryPlan = () => {
     return colors[index % colors.length];
   };
 
-  const getPetName = (petId) => {
-    const pet = pets.find(p => p.petId === petId);
-    return pet ? pet.nickname : 'Desconocido';
-  };
-
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -129,21 +124,6 @@ const SanitaryPlan = () => {
         await addReminder(formData);
       }
       closeModal();
-    } catch (error) {
-      alert(`Error: ${error.message}`);
-    }
-  };
-
-  const handleToggleComplete = async (reminder) => {
-    if (!isAuthenticated) {
-      alert('Debes iniciar sesión para completar reminders');
-      return;
-    }
-    try {
-      await updateReminder(reminder.rowIndex, {
-        ...reminder,
-        completado: !reminder.completado
-      });
     } catch (error) {
       alert(`Error: ${error.message}`);
     }
