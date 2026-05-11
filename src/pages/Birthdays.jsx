@@ -6,7 +6,7 @@ import './Birthdays.css';
 
 const getDaysUntilBirthday = (nacimiento) => {
   if (!nacimiento) return null;
-  const [ month, day] = nacimiento.split('-').map(Number);
+  const [, month, day] = nacimiento.split('-').map(Number);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const currentYear = today.getFullYear();
