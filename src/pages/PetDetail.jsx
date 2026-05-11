@@ -127,7 +127,7 @@ const PetDetail = () => {
           {/* Tab de Perfil */}
           {activeTab === 'profile' && (
             <div className="pet-profile-section">
-              <PetProfile pet={pet} />
+              <PetProfile pet={pet} history={history} />
               {isAuthenticated && (
                 <Button
                   onClick={handleEditPet}

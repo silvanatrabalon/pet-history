@@ -2,12 +2,16 @@ import React from 'react';
 import { formatAge, formatDate } from '../../utils/helpers';
 import './PetProfile.css';
 
-const PetProfile = ({ pet }) => {
+const PetProfile = ({ pet, history = [] }) => {
   if (!pet) {
     return <div className="pet-profile-empty">Mascota no encontrada</div>;
   }
 
   const displayName = pet.nickname || pet.nombre;
+
+  const latestWeight = history
+    .filter(r => r.peso)
+    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0];
 
   return (
     <div className="pet-profile">
@@ -55,6 +59,16 @@ const PetProfile = ({ pet }) => {
           <div className="info-row">
             <span className="info-label">Sexo</span>
             <span className="info-value">{pet.sexo}</span>
+          </div>
+        )}
+
+        {latestWeight && (
+          <div className="info-row">
+            <span className="info-label">Último Peso</span>
+            <span className="info-value">
+              {latestWeight.peso} kg
+              <span className="info-weight-date"> · {formatDate(latestWeight.fecha)}</span>
+            </span>
           </div>
         )}
 

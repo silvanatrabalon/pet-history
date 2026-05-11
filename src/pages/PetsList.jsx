@@ -46,6 +46,11 @@ const PetsList = () => {
     navigate('/sanitary-plan');
   };
 
+  const handleBirthdays = () => {
+    setMenuOpen(false);
+    navigate('/birthdays');
+  };
+
   const handleLogin = async () => {
     setMenuOpen(false);
     try {
@@ -93,6 +98,10 @@ const PetsList = () => {
                   <button onClick={handleSanitaryPlan} className="menu-item">
                     <span className="menu-icon">📅</span>
                     <span>Plan Sanitario</span>
+                  </button>
+                  <button onClick={handleBirthdays} className="menu-item">
+                    <span className="menu-icon">🎂</span>
+                    <span>Cumpleaños</span>
                   </button>
                   {isAuthenticated ? (
                     <button onClick={handleLogout} className="menu-item logout">
